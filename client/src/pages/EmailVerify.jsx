@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaArrowRight } from "react-icons/fa";
 
 const EmailVerify = () => {
   const { backendUrl, isLoggedIn, userData, getUserData } =
@@ -16,6 +17,11 @@ const EmailVerify = () => {
   const handleInput = (e, index) => {
     if (e.target.value.length > 0 && index < inputRefs.current.length - 1) {
       inputRefs.current[index + 1].focus();
+    }
+
+    const otpArray = inputRefs.current.map((input) => input.value);
+    if (otpArray.every((digit) => digit !== "")) {
+      setTimeout(() => onSubmitHandler(e), 500);
     }
   };
 
@@ -70,37 +76,51 @@ const EmailVerify = () => {
   }, [isLoggedIn, userData]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen sm:px-0 bg-gradient-to-br from-blue-200 to-purple-400">
-      <h1
-        onClick={() => navigate("/")}
-        className="text-blue-500 text-2xl absolute left-5 sm:left-20 top-5 cursor-pointer"
-      >
-        MovieVault
-      </h1>
-      <form className="bg-slate-900 p-8 rounded-lg shadow-lg w-96 text-sm">
-        <h1 className="text-white text-2xl font-semibold text-center mb-4">
-          Email Verification
-        </h1>
-        <p className="text-center mb-6 text-indigo-300">
-          Enter the 6-digit code sent to your email
-        </p>
-        <div className="flex justify-between mb-6" onPaste={handlePaste}>
-          {Array(6)
-            .fill(0)
-            .map((_, index) => (
-              <input
-                type="text"
-                maxLength="1"
-                key={index}
-                required
-                className="w-12 h-12 bg-[#333A5C] text-white text-center text-xl rounded-md"
-                ref={(e) => (inputRefs.current[index] = e)}
-                onInput={(e) => handleInput(e, index)}
-                onKeyDown={(e) => handleKeyDown(e, index)}
-              />
-            ))}
+    <div className="flex min-h-screen w-full">
+      {/* Left Side */}
+      <div className="w-1/2 h-screen flex items-center justify-center p-5">
+        <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
+          <div
+            onClick={() => navigate("/")}
+            className="absolute bg-gray-200/20 hover:bg-gray-200/30 transition-all duration-300 backdrop-blur-lg top-5 right-5 py-2 px-4 rounded-2xl text-white font-light flex items-center justify-center gap-2 cursor-pointer"
+          >
+            Back to website
+            <FaArrowRight />
+          </div>
         </div>
-      </form>
+      </div>
+
+      {/* Right Side */}
+      <div className="w-1/2 h-screen flex items-center justify-center p-5 relative">
+        <form className="w-full h-full max-w-md p-5 flex flex-col justify-center items-start">
+          <h1 className="text-4xl text-black font-medium text-left w-full mb-4">
+            Email Verification
+          </h1>
+          <p className="text-gray-800 w-full text-left font-light mb-8">
+            Enter the 6-digit code sent to{" "}
+            <span className="font-semibold">{userData.email}</span>
+          </p>
+          <div
+            className="flex justify-between mb-6 gap-2"
+            onPaste={handlePaste}
+          >
+            {Array(6)
+              .fill(0)
+              .map((_, index) => (
+                <input
+                  type="text"
+                  maxLength="1"
+                  key={index}
+                  required
+                  className="w-12 h-14 border border-gray-400 text-center text-xl font-bold rounded-md"
+                  ref={(e) => (inputRefs.current[index] = e)}
+                  onInput={(e) => handleInput(e, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                />
+              ))}
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

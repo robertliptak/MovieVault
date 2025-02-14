@@ -41,13 +41,13 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24 absolute top-0 ">
-      <h1 className="text-blue-500 text-2xl">MovieVault</h1>
+    <div className="w-full flex justify-between items-center px-24 py-4 absolute top-0 bg-white">
+      <img src="/MovieVault_logo.png" className="w-10 h-10" />
       {userData ? (
-        <div className="w-8 h-8 flex justify-center items-center rounded-full bg-black text-white relative group">
+        <div className="w-10 h-10 flex justify-center items-center rounded-full bg-black text-white relative group">
           {userData.name[0].toUpperCase()}
-          <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-10">
-            <ul className="list-none m-0 p-2 bg-gray-100 text-sm">
+          <div className="absolute hidden group-hover:block top-1 z-10 text-black rounded pt-10">
+            <ul className="list-none m-0 p-2 bg-gray-100 text-sm rounded-md">
               {!userData.isAccountVerified && (
                 <li
                   onClick={sendVerificationOtp}
@@ -69,9 +69,9 @@ const Navbar = () => {
       ) : (
         <button
           onClick={() => navigate("/login")}
-          className="flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-gray-100 transition-all"
+          className="p-2.5 px-5 rounded-md  bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer"
         >
-          Login
+          Log in
         </button>
       )}
     </div>

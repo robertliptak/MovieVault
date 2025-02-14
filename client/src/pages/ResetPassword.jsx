@@ -3,6 +3,7 @@ import React, { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
+import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
 
 const ResetPassword = () => {
   const { backendUrl, isLoggedIn, userData, getUserData } =
@@ -14,6 +15,7 @@ const ResetPassword = () => {
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [otp, setOtp] = useState(0);
   const [isOtpSubmitted, setIsOtpSubmitted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const inputRefs = useRef([]);
 
@@ -22,6 +24,11 @@ const ResetPassword = () => {
   const handleInput = (e, index) => {
     if (e.target.value.length > 0 && index < inputRefs.current.length - 1) {
       inputRefs.current[index + 1].focus();
+    }
+
+    const otpArray = inputRefs.current.map((input) => input.value);
+    if (otpArray.every((digit) => digit !== "")) {
+      setTimeout(() => onSubmitOtp(e), 500);
     }
   };
 
@@ -79,8 +86,6 @@ const ResetPassword = () => {
         { email, otp, newPassword }
       );
 
-      console.log({ email, otp, password: newPassword });
-
       data.success ? toast.success(data.message) : toast.error(data.message);
       data.success && navigate("/login");
     } catch (error) {
@@ -89,88 +94,134 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen sm:px-0 bg-gradient-to-br from-blue-200 to-purple-400">
-      <h1
-        onClick={() => navigate("/")}
-        className="text-blue-500 text-2xl absolute left-5 sm:left-20 top-5 cursor-pointer"
-      >
-        MovieVault
-      </h1>
-      {/* Email form */}
-      {!isEmailSent && (
-        <form
-          onSubmit={onSubmitEmail}
-          className="bg-slate-900 p-8 rounded-lg shadow-lg w-96 text-sm"
-        >
-          <h1 className="text-white text-2xl font-semibold text-center mb-4">
-            Reset password
-          </h1>
-          <p className="text-center mb-6 text-indigo-300">
-            Enter your registered email address
-          </p>
-          <input
-            className="mb-4 w-full px-5 py-2.5 rounded-full bg-[#333A5C] text-white"
-            type="email"
-            placeholder="Email"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            required
-          />
-          <button className="w-full py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900 text-white font-medium cursor-pointer">
-            Send reset code
-          </button>
-        </form>
-      )}
-      {/* Reset code form */}
-      {!isOtpSubmitted && isEmailSent && (
-        <form className="bg-slate-900 p-8 rounded-lg shadow-lg w-96 text-sm">
-          <h1 className="text-white text-2xl font-semibold text-center mb-4">
-            Reset password
-          </h1>
-          <p className="text-center mb-6 text-indigo-300">
-            Enter the 6-digit code sent to your email
-          </p>
-          <div className="flex justify-between mb-6" onPaste={handlePaste}>
-            {Array(6)
-              .fill(0)
-              .map((_, index) => (
-                <input
-                  type="text"
-                  maxLength="1"
-                  key={index}
-                  required
-                  className="w-12 h-12 bg-[#333A5C] text-white text-center text-xl rounded-md"
-                  ref={(e) => (inputRefs.current[index] = e)}
-                  onInput={(e) => handleInput(e, index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                />
-              ))}
+    <div className="flex min-h-screen w-full">
+      {/* Left Side */}
+      <div className="w-1/2 h-screen flex items-center justify-center p-5">
+        <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
+          <div
+            onClick={() => navigate("/login")}
+            className="absolute bg-gray-200/20 hover:bg-gray-200/30 transition-all duration-300 backdrop-blur-lg top-5 right-5 py-2 px-4 rounded-2xl text-white font-light flex items-center justify-center gap-2 cursor-pointer"
+          >
+            Back to log in
+            <FaArrowRight />
           </div>
-        </form>
-      )}
-      {/* New password form */}
-      {isOtpSubmitted && isEmailSent && (
-        <form
-          onSubmit={onSubmitNewPassword}
-          className="bg-slate-900 p-8 rounded-lg shadow-lg w-96 text-sm"
-        >
-          <h1 className="text-white text-2xl font-semibold text-center mb-4">
-            New password
-          </h1>
-          <p className="text-center mb-6 text-indigo-300">Enter new password</p>
-          <input
-            className="mb-4 w-full px-5 py-2.5 rounded-full bg-[#333A5C] text-white"
-            type="password"
-            placeholder="Password"
-            onChange={(e) => setNewPassword(e.target.value)}
-            value={newPassword}
-            required
-          />
-          <button className="w-full py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900 text-white font-medium cursor-pointer">
-            Submit
-          </button>
-        </form>
-      )}
+        </div>
+      </div>
+
+      {/* Right Side */}
+      <div className="w-1/2 h-screen flex items-center justify-center p-5 relative">
+        {/* Email form */}
+        {!isEmailSent && (
+          <form
+            onSubmit={onSubmitEmail}
+            className="w-full h-full max-w-md p-5 flex flex-col justify-center items-center"
+          >
+            <h1 className="text-4xl text-black font-medium text-left w-full mb-4">
+              Reset password
+            </h1>
+            <p className="text-gray-800 w-full text-left font-light mb-8">
+              Enter your registered email address
+            </p>
+            <input
+              className="mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
+              type="email"
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              required
+            />
+            <button className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer">
+              Send reset code
+            </button>
+          </form>
+        )}
+        {/* Reset code form */}
+        {!isOtpSubmitted && isEmailSent && (
+          <form className="w-full h-full max-w-md p-5 flex flex-col justify-center items-start">
+            <h1 className="text-4xl text-black font-medium text-left w-full mb-4">
+              Reset password
+            </h1>
+            <p className="text-gray-800 w-full text-left font-light mb-8">
+              Enter the 6-digit code sent to{" "}
+              <span className="font-semibold">{email}</span>
+            </p>
+            <div
+              className="flex justify-between mb-6 gap-2"
+              onPaste={handlePaste}
+            >
+              {Array(6)
+                .fill(0)
+                .map((_, index) => (
+                  <input
+                    type="text"
+                    maxLength="1"
+                    key={index}
+                    required
+                    className="w-12 h-14 border border-gray-400 text-center text-xl font-bold rounded-md"
+                    ref={(e) => (inputRefs.current[index] = e)}
+                    onInput={(e) => handleInput(e, index)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                  />
+                ))}
+            </div>
+          </form>
+        )}
+        {/* New password form */}
+        {isOtpSubmitted && isEmailSent && (
+          <form
+            onSubmit={onSubmitNewPassword}
+            className="w-full h-full max-w-md p-5 flex flex-col justify-center items-center"
+          >
+            <h1 className="text-4xl text-black font-medium text-left w-full mb-4">
+              New password
+            </h1>
+            <p className="text-gray-800 w-full text-left font-light mb-8">
+              Enter new password
+            </p>
+            <div className="relative w-full mb-3">
+              <input
+                className="w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                onChange={(e) => setNewPassword(e.target.value)}
+                value={newPassword}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 transition-all duration-200"
+              >
+                {showPassword ? (
+                  <FaEyeSlash className="cursor-pointer" />
+                ) : (
+                  <FaEye className="cursor-pointer" />
+                )}
+              </button>
+            </div>
+            <button className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer">
+              Submit
+            </button>
+          </form>
+        )}
+        <div className="absolute bottom-14 transform -translate-y-1/2 w-1/3 flex items-center justify-between">
+          <div
+            className={`w-16 h-2 rounded-full ${
+              !isEmailSent ? "bg-blue-800" : "bg-gray-300"
+            }`}
+          ></div>
+          <div
+            className={`w-16 h-2 rounded-full  ${
+              !isOtpSubmitted && isEmailSent ? "bg-blue-800" : "bg-gray-300"
+            }`}
+          ></div>
+          <div
+            className={`w-16 h-2 rounded-full ${
+              isOtpSubmitted && isEmailSent ? "bg-blue-800" : "bg-gray-300"
+            }`}
+          ></div>
+        </div>
+      </div>
     </div>
   );
 };

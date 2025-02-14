@@ -13,7 +13,7 @@ export const EMAIL_VERIFY_TEMPLATE = `
       margin: 0;
       padding: 0;
       font-family: 'Open Sans', sans-serif;
-      background: #E5E5E5;
+      background: #dbdbdb;
     }
 
     table, td {
@@ -34,12 +34,13 @@ export const EMAIL_VERIFY_TEMPLATE = `
 
     .button {
       width: 100%;
-      background: #22D172;
+      background: #193cb8;
       text-decoration: none;
       display: inline-block;
       padding: 10px 0;
       color: #fff;
-      font-size: 14px;
+      font-size: 16px;
+      letter-spacing: 2px;
       text-align: center;
       font-weight: bold;
       border-radius: 7px;
@@ -80,7 +81,7 @@ export const EMAIL_VERIFY_TEMPLATE = `
                       </tr>
                       <tr>
                         <td style="padding: 0 0 16px; font-size: 14px; line-height: 150%; font-weight: 700;">
-                          Use below OTP to verify your account.
+                          Use code below to verify your account.
                         </td>
                       </tr>
                       <tr>
@@ -90,7 +91,7 @@ export const EMAIL_VERIFY_TEMPLATE = `
                       </tr>
                       <tr>
                         <td style="padding: 0 0 10px; font-size: 14px; line-height: 150%;">
-                          This OTP is valid for 24 hours.
+                          This code is valid for 24 hours.
                         </td>
                       </tr>
                     </tbody>
@@ -124,7 +125,7 @@ export const PASSWORD_RESET_TEMPLATE = `
       margin: 0;
       padding: 0;
       font-family: 'Open Sans', sans-serif;
-      background: #E5E5E5;
+      background: #dbdbdb;
     }
 
     table, td {
@@ -145,12 +146,13 @@ export const PASSWORD_RESET_TEMPLATE = `
 
     .button {
       width: 100%;
-      background: #22D172;
+      background: #193cb8;
       text-decoration: none;
       display: inline-block;
       padding: 10px 0;
       color: #fff;
-      font-size: 14px;
+      font-size: 16px;
+      letter-spacing: 2px;
       text-align: center;
       font-weight: bold;
       border-radius: 7px;
@@ -191,7 +193,7 @@ export const PASSWORD_RESET_TEMPLATE = `
                       </tr>
                       <tr>
                         <td style="padding: 0 0 16px; font-size: 14px; line-height: 150%; font-weight: 700;">
-                          Use the OTP below to reset the password.
+                          Use the code below to reset the password.
                         </td>
                       </tr>
                       <tr>
@@ -201,7 +203,7 @@ export const PASSWORD_RESET_TEMPLATE = `
                       </tr>
                       <tr>
                         <td style="padding: 0 0 10px; font-size: 14px; line-height: 150%;">
-                          The password reset otp is only valid for the next 15 minutes.
+                          The password reset code is only valid for the next 15 minutes.
                         </td>
                       </tr>
                     </tbody>
