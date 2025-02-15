@@ -6,8 +6,7 @@ import { toast } from "react-toastify";
 import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
 
 const ResetPassword = () => {
-  const { backendUrl, isLoggedIn, userData, getUserData } =
-    useContext(AppContext);
+  const { backendUrl } = useContext(AppContext);
 
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -16,6 +15,9 @@ const ResetPassword = () => {
   const [otp, setOtp] = useState(0);
   const [isOtpSubmitted, setIsOtpSubmitted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const [loadingPassword, setLoadingPassword] = useState(false);
 
   const inputRefs = useRef([]);
 
@@ -57,6 +59,7 @@ const ResetPassword = () => {
 
   const onSubmitEmail = async (e) => {
     e.preventDefault();
+    setLoadingEmail(true);
 
     try {
       const { data } = await axios.post(
@@ -64,9 +67,11 @@ const ResetPassword = () => {
         { email }
       );
       data.success ? toast.success(data.message) : toast.error(data.message);
-      data.success && setIsEmailSent(true);
+      if (data.success) setIsEmailSent(true);
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoadingEmail(false);
     }
   };
 
@@ -80,6 +85,8 @@ const ResetPassword = () => {
 
   const onSubmitNewPassword = async (e) => {
     e.preventDefault();
+    setLoadingPassword(true);
+
     try {
       const { data } = await axios.post(
         backendUrl + "/api/auth/reset-password",
@@ -87,9 +94,11 @@ const ResetPassword = () => {
       );
 
       data.success ? toast.success(data.message) : toast.error(data.message);
-      data.success && navigate("/login");
+      if (data.success) navigate("/login");
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoadingPassword(false);
     }
   };
 
@@ -130,8 +139,11 @@ const ResetPassword = () => {
               value={email}
               required
             />
-            <button className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer">
-              Send reset code
+            <button
+              className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
+              disabled={loadingEmail}
+            >
+              {loadingEmail ? "Sending..." : "Send reset code"}
             </button>
           </form>
         )}
@@ -199,8 +211,11 @@ const ResetPassword = () => {
                 )}
               </button>
             </div>
-            <button className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer">
-              Submit
+            <button
+              className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
+              disabled={loadingPassword}
+            >
+              {loadingPassword ? "Resetting..." : "Submit"}
             </button>
           </form>
         )}

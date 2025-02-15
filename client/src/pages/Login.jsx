@@ -13,13 +13,15 @@ const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // Toggle state
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onSubmitHandler = async (e) => {
-    try {
-      e.preventDefault();
-      axios.defaults.withCredentials = true;
+    e.preventDefault();
+    setLoading(true);
 
+    try {
+      axios.defaults.withCredentials = true;
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
       const payload = isLogin ? { email, password } : { name, email, password };
 
@@ -34,6 +36,8 @@ const Login = () => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,7 +71,7 @@ const Login = () => {
                 setEmail("");
                 setPassword("");
               }}
-              className="text-blue-800 hover:text-blue-900 transition-all duration-300 cursor-pointer underline"
+              className="text-blue-700 hover:text-blue-800 transition-all duration-300 cursor-pointer underline"
             >
               {isLogin ? "Sign up here" : "Log in here"}
             </span>
@@ -76,7 +80,7 @@ const Login = () => {
           <form onSubmit={onSubmitHandler} className="w-full">
             {!isLogin && (
               <input
-                className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
+                className="outline-none dark:bg-medium-black dark:text-gray-200 placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
                 type="text"
                 placeholder="Name"
                 onChange={(e) => setName(e.target.value)}
@@ -86,7 +90,7 @@ const Login = () => {
             )}
 
             <input
-              className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
+              className="outline-none dark:bg-medium-black dark:text-gray-200 placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
               type="email"
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
@@ -97,7 +101,7 @@ const Login = () => {
             {/* Password Field with Toggle */}
             <div className="relative w-full mb-3">
               <input
-                className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10"
+                className="outline-none dark:bg-medium-black dark:text-gray-200 placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10"
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
@@ -118,7 +122,7 @@ const Login = () => {
             </div>
 
             {isLogin && (
-              <div className="text-blue-800 hover:text-blue-900 transition-all duration-300">
+              <div className="text-blue-700 hover:text-blue-800 transition-all duration-300">
                 <span
                   onClick={() => navigate("/reset-password")}
                   className="cursor-pointer"
@@ -128,8 +132,11 @@ const Login = () => {
               </div>
             )}
 
-            <button className="w-full py-2.5 rounded-md mt-10 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer">
-              {isLogin ? "Log in" : "Sign up"}
+            <button
+              className="w-full py-2.5 rounded-md mt-10 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
+              disabled={loading}
+            >
+              {loading ? "Loading..." : isLogin ? "Log in" : "Sign up"}
             </button>
           </form>
         </div>
