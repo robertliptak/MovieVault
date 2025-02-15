@@ -38,7 +38,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full dark:bg-dark-black">
       {/* Left Side */}
       <div className="w-1/2 h-screen flex items-center justify-center p-5">
         <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
@@ -55,11 +55,11 @@ const Login = () => {
       {/* Right Side */}
       <div className="w-1/2 h-screen flex items-center justify-center p-5">
         <div className="w-full h-full max-w-md p-5 flex flex-col justify-center items-center">
-          <h1 className="text-4xl text-black font-medium text-left w-full mb-6">
+          <h1 className="text-4xl text-black dark:text-gray-200 font-medium text-left w-full mb-6">
             {isLogin ? "Log In" : "Create an account"}
           </h1>
 
-          <p className="text-gray-800 w-full text-left font-light mb-10">
+          <p className="text-gray-800 dark:text-gray-400 w-full text-left font-light mb-10">
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <span
               onClick={() => {
@@ -76,7 +76,7 @@ const Login = () => {
           <form onSubmit={onSubmitHandler} className="w-full">
             {!isLogin && (
               <input
-                className="mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
+                className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
                 type="text"
                 placeholder="Name"
                 onChange={(e) => setName(e.target.value)}
@@ -86,7 +86,7 @@ const Login = () => {
             )}
 
             <input
-              className="mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
+              className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
               type="email"
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
@@ -97,7 +97,7 @@ const Login = () => {
             {/* Password Field with Toggle */}
             <div className="relative w-full mb-3">
               <input
-                className="w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10"
+                className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10"
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
@@ -107,7 +107,7 @@ const Login = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 transition-all duration-200"
+                className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 dark:hover:text-gray-400 transition-all duration-200"
               >
                 {showPassword ? (
                   <FaEyeSlash className="cursor-pointer" />

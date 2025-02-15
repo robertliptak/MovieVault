@@ -76,7 +76,7 @@ const EmailVerify = () => {
   }, [isLoggedIn, userData]);
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full dark:bg-dark-black">
       {/* Left Side */}
       <div className="w-1/2 h-screen flex items-center justify-center p-5">
         <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
@@ -93,10 +93,10 @@ const EmailVerify = () => {
       {/* Right Side */}
       <div className="w-1/2 h-screen flex items-center justify-center p-5 relative">
         <form className="w-full h-full max-w-md p-5 flex flex-col justify-center items-start">
-          <h1 className="text-4xl text-black font-medium text-left w-full mb-4">
+          <h1 className="text-4xl text-black dark:text-gray-200 font-medium text-left w-full mb-4">
             Email Verification
           </h1>
-          <p className="text-gray-800 w-full text-left font-light mb-8">
+          <p className="text-gray-800 dark:text-gray-400 w-full text-left font-light mb-8">
             Enter the 6-digit code sent to{" "}
             <span className="font-semibold">{userData.email}</span>
           </p>
@@ -112,7 +112,7 @@ const EmailVerify = () => {
                   maxLength="1"
                   key={index}
                   required
-                  className="w-12 h-14 border border-gray-400 text-center text-xl font-bold rounded-md"
+                  className="w-12 h-14 border border-gray-400 dark:text-gray-200 outline-none text-center text-xl font-bold rounded-md"
                   ref={(e) => (inputRefs.current[index] = e)}
                   onInput={(e) => handleInput(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}

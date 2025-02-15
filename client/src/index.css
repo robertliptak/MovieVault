@@ -1,6 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-dark-black: #0a0a0a;
+  --color-medium-black: #1d1d1d;
+  --color-light-black: #343434;
+}
+
 * {
   font-family: "Outfit", sans-serif;
 }

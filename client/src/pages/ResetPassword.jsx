@@ -94,7 +94,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full dark:bg-dark-black">
       {/* Left Side */}
       <div className="w-1/2 h-screen flex items-center justify-center p-5">
         <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
@@ -116,14 +116,14 @@ const ResetPassword = () => {
             onSubmit={onSubmitEmail}
             className="w-full h-full max-w-md p-5 flex flex-col justify-center items-center"
           >
-            <h1 className="text-4xl text-black font-medium text-left w-full mb-4">
+            <h1 className="text-4xl text-black dark:text-gray-200 font-medium text-left w-full mb-4">
               Reset password
             </h1>
-            <p className="text-gray-800 w-full text-left font-light mb-8">
+            <p className="text-gray-800 dark:text-gray-400 w-full text-left font-light mb-8">
               Enter your registered email address
             </p>
             <input
-              className="mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
+              className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
               type="email"
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
@@ -138,10 +138,10 @@ const ResetPassword = () => {
         {/* Reset code form */}
         {!isOtpSubmitted && isEmailSent && (
           <form className="w-full h-full max-w-md p-5 flex flex-col justify-center items-start">
-            <h1 className="text-4xl text-black font-medium text-left w-full mb-4">
+            <h1 className="text-4xl text-black dark:text-gray-200 font-medium text-left w-full mb-4">
               Reset password
             </h1>
-            <p className="text-gray-800 w-full text-left font-light mb-8">
+            <p className="text-gray-800 dark:text-gray-400 w-full text-left font-light mb-8">
               Enter the 6-digit code sent to{" "}
               <span className="font-semibold">{email}</span>
             </p>
@@ -157,7 +157,7 @@ const ResetPassword = () => {
                     maxLength="1"
                     key={index}
                     required
-                    className="w-12 h-14 border border-gray-400 text-center text-xl font-bold rounded-md"
+                    className="w-12 h-14 border border-gray-400 dark:text-gray-200 outline-none text-center text-xl font-bold rounded-md"
                     ref={(e) => (inputRefs.current[index] = e)}
                     onInput={(e) => handleInput(e, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
@@ -172,15 +172,15 @@ const ResetPassword = () => {
             onSubmit={onSubmitNewPassword}
             className="w-full h-full max-w-md p-5 flex flex-col justify-center items-center"
           >
-            <h1 className="text-4xl text-black font-medium text-left w-full mb-4">
-              New password
+            <h1 className="text-4xl text-black dark:text-gray-200 font-medium text-left w-full mb-4">
+              Reset password
             </h1>
-            <p className="text-gray-800 w-full text-left font-light mb-8">
+            <p className="text-gray-800  dark:text-gray-400 w-full text-left font-light mb-8">
               Enter new password
             </p>
             <div className="relative w-full mb-3">
               <input
-                className="w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10"
+                className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10"
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -190,7 +190,7 @@ const ResetPassword = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 transition-all duration-200"
+                className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 dark:hover:text-gray-400 transition-all duration-200"
               >
                 {showPassword ? (
                   <FaEyeSlash className="cursor-pointer" />
@@ -207,17 +207,21 @@ const ResetPassword = () => {
         <div className="absolute bottom-14 transform -translate-y-1/2 w-1/3 flex items-center justify-between">
           <div
             className={`w-16 h-2 rounded-full ${
-              !isEmailSent ? "bg-blue-800" : "bg-gray-300"
+              !isEmailSent ? "bg-blue-800" : "bg-gray-300 dark:bg-gray-600"
             }`}
           ></div>
           <div
             className={`w-16 h-2 rounded-full  ${
-              !isOtpSubmitted && isEmailSent ? "bg-blue-800" : "bg-gray-300"
+              !isOtpSubmitted && isEmailSent
+                ? "bg-blue-800"
+                : "bg-gray-300 dark:bg-gray-600"
             }`}
           ></div>
           <div
             className={`w-16 h-2 rounded-full ${
-              isOtpSubmitted && isEmailSent ? "bg-blue-800" : "bg-gray-300"
+              isOtpSubmitted && isEmailSent
+                ? "bg-blue-800"
+                : "bg-gray-300 dark:bg-gray-600"
             }`}
           ></div>
         </div>
