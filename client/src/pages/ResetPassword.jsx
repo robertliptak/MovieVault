@@ -15,11 +15,25 @@ const ResetPassword = () => {
   const [otp, setOtp] = useState(0);
   const [isOtpSubmitted, setIsOtpSubmitted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [loadingPassword, setLoadingPassword] = useState(false);
 
   const inputRefs = useRef([]);
+
+  const validatePassword = (password) => {
+    return /^(?=.*\d).{6,}$/.test(password);
+  };
+
+  const validateForm = () => {
+    let newErrors = {};
+    if (!validatePassword(newPassword))
+      newErrors.password =
+        "Password must be at least 6 characters and contain a number";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   axios.defaults.withCredentials = true;
 
@@ -66,7 +80,14 @@ const ResetPassword = () => {
         backendUrl + "/api/auth/send-reset-otp",
         { email }
       );
-      data.success ? toast.success(data.message) : toast.error(data.message);
+
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        let newErrors = {};
+        newErrors.email = data.message;
+        setErrors(newErrors);
+      }
       if (data.success) setIsEmailSent(true);
     } catch (error) {
       toast.error(error.message);
@@ -85,6 +106,11 @@ const ResetPassword = () => {
 
   const onSubmitNewPassword = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     setLoadingPassword(true);
 
     try {
@@ -123,7 +149,7 @@ const ResetPassword = () => {
         {!isEmailSent && (
           <form
             onSubmit={onSubmitEmail}
-            className="w-full h-full max-w-md p-5 flex flex-col justify-center items-center"
+            className="w-full h-full max-w-md p-5 flex flex-col justify-center "
           >
             <h1 className="text-4xl text-black dark:text-gray-200 font-medium text-left w-full mb-4">
               Reset password
@@ -131,17 +157,26 @@ const ResetPassword = () => {
             <p className="text-gray-800 dark:text-gray-400 w-full text-left font-light mb-8">
               Enter your registered email address
             </p>
-            <input
-              className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
-              type="email"
-              placeholder="Email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              required
-            />
+            <div className="mb-4">
+              <input
+                className={`outline-none border ${
+                  errors.email ? "border-red-500" : "border-transparent"
+                } dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200`}
+                type="email"
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                onClick={() => setErrors({})}
+                value={email}
+                required
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
+              )}
+            </div>
+
             <button
               className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
-              disabled={loadingEmail}
+              disabled={loadingEmail || errors.email}
             >
               {loadingEmail ? "Sending..." : "Send reset code"}
             </button>
@@ -182,38 +217,47 @@ const ResetPassword = () => {
         {isOtpSubmitted && isEmailSent && (
           <form
             onSubmit={onSubmitNewPassword}
-            className="w-full h-full max-w-md p-5 flex flex-col justify-center items-center"
+            className="w-full h-full max-w-md p-5 flex flex-col justify-center"
           >
             <h1 className="text-4xl text-black dark:text-gray-200 font-medium text-left w-full mb-4">
               Reset password
             </h1>
-            <p className="text-gray-800  dark:text-gray-400 w-full text-left font-light mb-8">
+            <p className="text-gray-800  dark:text-gray-400 w-full text-left font-light mb-6">
               Enter new password
             </p>
-            <div className="relative w-full mb-3">
-              <input
-                className="outline-none dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10"
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                onChange={(e) => setNewPassword(e.target.value)}
-                value={newPassword}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 dark:hover:text-gray-400 transition-all duration-200"
-              >
-                {showPassword ? (
-                  <FaEyeSlash className="cursor-pointer" />
-                ) : (
-                  <FaEye className="cursor-pointer" />
-                )}
-              </button>
+            <div className="mb-3">
+              <div className="relative w-full">
+                <input
+                  className={`outline-none border ${
+                    errors.password ? "border-red-500" : "border-transparent"
+                  } dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10`}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  onClick={() => setErrors({})}
+                  value={newPassword}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 dark:hover:text-gray-400 transition-all duration-200"
+                >
+                  {showPassword ? (
+                    <FaEyeSlash className="cursor-pointer" />
+                  ) : (
+                    <FaEye className="cursor-pointer" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password}</p>
+              )}
             </div>
+
             <button
               className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
-              disabled={loadingPassword}
+              disabled={loadingPassword || errors.password}
             >
               {loadingPassword ? "Resetting..." : "Submit"}
             </button>

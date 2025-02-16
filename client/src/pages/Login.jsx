@@ -15,9 +15,32 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validateEmail = (email) => {
+    return /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
+  };
+
+  const validatePassword = (password) => {
+    return /^(?=.*\d).{6,}$/.test(password);
+  };
+
+  const validateForm = () => {
+    let newErrors = {};
+    if (!isLogin) {
+      if (!name.trim()) newErrors.name = "Name cannot be empty";
+    }
+    if (!validateEmail(email)) newErrors.email = "Invalid email address";
+    if (!validatePassword(password))
+      newErrors.password =
+        "Password must be at least 6 characters and contain a number";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    if (!isLogin && !validateForm()) return;
     setLoading(true);
 
     try {
@@ -32,7 +55,11 @@ const Login = () => {
         getUserData();
         navigate("/");
       } else {
-        toast.error(data.message);
+        let newErrors = {};
+        newErrors.email = data.message;
+        newErrors.name = data.message;
+        newErrors.password = data.message;
+        setErrors(newErrors);
       }
     } catch (error) {
       toast.error(error.message);
@@ -45,7 +72,7 @@ const Login = () => {
     <div className="flex min-h-screen w-full dark:bg-dark-black">
       {/* Left Side */}
       <div className="w-1/2 h-screen flex items-center justify-center p-5">
-        <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
+        <div className="w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
           <div
             onClick={() => navigate("/")}
             className="absolute bg-gray-200/20 hover:bg-gray-200/30 transition-all duration-300 backdrop-blur-lg top-5 right-5 py-2 px-4 rounded-2xl text-white font-light flex items-center justify-center gap-2 cursor-pointer"
@@ -70,6 +97,7 @@ const Login = () => {
                 setIsLogin((prev) => !prev);
                 setEmail("");
                 setPassword("");
+                setErrors({});
               }}
               className="text-blue-700 hover:text-blue-800 transition-all duration-300 cursor-pointer underline"
             >
@@ -80,45 +108,55 @@ const Login = () => {
           <form onSubmit={onSubmitHandler} className="w-full">
             {!isLogin && (
               <input
-                className="outline-none dark:bg-medium-black dark:text-gray-200 placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
+                className={`outline-none border ${
+                  errors.name ? "border-red-500" : "border-transparent"
+                } dark:bg-medium-black dark:text-gray-200 placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 mb-2`}
                 type="text"
                 placeholder="Name"
                 onChange={(e) => setName(e.target.value)}
+                onClick={() => setErrors({})}
                 value={name}
-                required
               />
             )}
 
             <input
-              className="outline-none dark:bg-medium-black dark:text-gray-200 placeholder:text-gray-600 mb-4 w-full px-5 py-2.5 rounded-md bg-gray-200"
+              className={`outline-none border ${
+                errors.email ? "border-red-500" : "border-transparent"
+              } dark:bg-medium-black dark:text-gray-200 placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 mb-2`}
               type="email"
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
+              onClick={() => setErrors({})}
               value={email}
-              required
             />
 
-            {/* Password Field with Toggle */}
-            <div className="relative w-full mb-3">
-              <input
-                className="outline-none dark:bg-medium-black dark:text-gray-200 placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10"
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 dark:hover:text-gray-400 transition-all duration-200"
-              >
-                {showPassword ? (
-                  <FaEyeSlash className="cursor-pointer" />
-                ) : (
-                  <FaEye className="cursor-pointer" />
-                )}
-              </button>
+            <div className="mb-2">
+              <div className="relative w-full ">
+                <input
+                  className={`outline-none border ${
+                    errors.password ? "border-red-500" : "border-transparent"
+                  } dark:bg-medium-black dark:text-gray-200 placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10`}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  onClick={() => setErrors({})}
+                  value={password}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 dark:hover:text-gray-400 transition-all duration-200"
+                >
+                  {showPassword ? (
+                    <FaEyeSlash className="cursor-pointer" />
+                  ) : (
+                    <FaEye className="cursor-pointer" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password}</p>
+              )}
             </div>
 
             {isLogin && (
@@ -134,7 +172,7 @@ const Login = () => {
 
             <button
               className="w-full py-2.5 rounded-md mt-10 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
-              disabled={loading}
+              disabled={loading || Object.keys(errors).length > 0}
             >
               {loading ? "Loading..." : isLogin ? "Log in" : "Sign up"}
             </button>
