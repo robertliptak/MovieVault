@@ -1,12 +1,14 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import Header from "../components/Header";
+import SearchBar from "../components/SearchBar";
 
 const Home = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-all duration-500">
+    <div className="flex flex-col items-center justify-center min-h-screen dark:bg-gray-900 transition-all duration-500">
       <Navbar />
       <Header />
+      <SearchBar />
     </div>
   );
 };
