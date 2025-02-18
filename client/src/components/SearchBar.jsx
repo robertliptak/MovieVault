@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { AppContext } from "../context/AppContext";
 import { LuSearch } from "react-icons/lu";
+import { ImSpinner2 } from "react-icons/im"; // Import spinner icon
 import _ from "lodash";
 import MovieDetail from "./MovieDetail";
 
@@ -17,6 +18,8 @@ const SearchBar = () => {
   const [movies, setMovies] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [loadingMovieId, setLoadingMovieId] = useState(null); // Track which movie is being fetched
 
   const searchRef = useRef(null);
 
@@ -38,11 +41,10 @@ const SearchBar = () => {
         );
 
         const sortedMovies = res.data.results
-          ? res.data.results.sort((a, b) => b.popularity - a.popularity)
+          ? res.data.results.sort((a, b) => b.vote_count - a.vote_count)
           : [];
 
         setMovies(sortedMovies);
-        console.log(sortedMovies);
         setShowResults(true);
       } catch (error) {
         console.error("Error fetching movies:", error);
@@ -55,6 +57,27 @@ const SearchBar = () => {
     const newTitle = e.target.value;
     setTitle(newTitle);
     debouncedSearch(newTitle);
+  };
+
+  const fetchMovieDetail = async (movieId) => {
+    setLoadingMovieId(movieId); // Set loading state for clicked movie
+
+    try {
+      const res = await axios.post(
+        `${backendUrl}/api/movies/movie-detail`,
+        { movieId },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      setSelectedMovie(res.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching movie details:", error);
+    } finally {
+      setLoadingMovieId(null); // Reset loading state after request completes
+    }
   };
 
   const highlightText = (text, query) => {
@@ -75,7 +98,6 @@ const SearchBar = () => {
   };
 
   const handleInputClick = () => {
-    // If the input is clicked and results are hidden, we should trigger a search
     if (title.trim().length > 0 && !showResults) {
       debouncedSearch(title);
       setShowResults(true);
@@ -83,10 +105,7 @@ const SearchBar = () => {
   };
 
   useEffect(() => {
-    // Attach the click event listener to the document
     document.addEventListener("mousedown", handleClickOutside);
-
-    // Clean up the event listener on component unmount
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -101,7 +120,7 @@ const SearchBar = () => {
         <LuSearch className="text-gray-700 dark:text-gray-300 text-xl" />
         <input
           onChange={onChangeHandler}
-          onClick={handleInputClick} // Trigger fetching again when input is clicked
+          onClick={handleInputClick}
           value={title}
           type="text"
           className="w-full bg-transparent outline-none py-2 dark:text-gray-100 dark:placeholder:text-gray-300"
@@ -115,34 +134,51 @@ const SearchBar = () => {
           {movies.map((movie) => (
             <div
               key={movie.id}
-              className="flex items-center gap-3 px-4 py-2 last:border-none hover:bg-gray-200/60 dark:hover:bg-light-black/60 cursor-pointer transition-all duration-200"
+              className="flex items-center gap-3 px-4 py-2 last:border-none hover:bg-gray-200/60 dark:hover:bg-light-black/60 transition-all duration-200"
             >
-              <img
-                src={
-                  movie.poster_path
-                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                    : "/default_poster.jpg"
-                }
-                alt={movie.title}
-                className="w-12 h-16 object-cover rounded"
-                onClick={() => setIsModalOpen(true)}
-              />
-              <div>
-                <p
-                  className="text-sm font-medium dark:text-gray-100"
-                  dangerouslySetInnerHTML={{
-                    __html: highlightText(movie.title, title),
-                  }}
-                />
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  {movie.release_date.slice(0, 4)}
-                </p>
-              </div>
+              {loadingMovieId === movie.id ? (
+                <div className="w-full flex items-center justify-center py-4">
+                  <ImSpinner2 className="animate-spin text-gray-700 dark:text-gray-300 text-2xl" />
+                </div>
+              ) : (
+                <>
+                  <img
+                    src={
+                      movie.poster_path
+                        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                        : "/default_poster.jpg"
+                    }
+                    alt={movie.title}
+                    className="w-12 h-16 object-cover rounded cursor-pointer"
+                    onClick={() => fetchMovieDetail(movie.id)}
+                  />
+                  <div>
+                    <p
+                      className="text-sm font-medium dark:text-gray-100 cursor-pointer"
+                      dangerouslySetInnerHTML={{
+                        __html: highlightText(movie.title, title),
+                      }}
+                      onClick={() => fetchMovieDetail(movie.id)}
+                    />
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {movie.release_date
+                        ? movie.release_date.slice(0, 4)
+                        : "N/A"}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>
       )}
-      <MovieDetail isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {isModalOpen && selectedMovie && (
+        <MovieDetail
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          movie={selectedMovie}
+        />
+      )}
     </div>
   );
 };
