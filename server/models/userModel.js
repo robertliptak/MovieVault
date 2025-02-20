@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   isAccountVerified: { type: Boolean, default: false },
   resetOtp: { type: String, default: "" },
   resetOtpExpiredAt: { type: Number, default: 0 },
+  watchedMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: "movie" }],
 });
 
 const userModel = mongoose.models.user || mongoose.model("user", userSchema);

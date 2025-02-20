@@ -82,7 +82,24 @@ const MovieDetail = ({ isOpen, onClose, movie }) => {
                 <p className="text-medium-black text-sm dark:text-gray-100">
                   {movie.omdbData.Genre}
                 </p>
-
+                <p className="text-gray-600 text-sm dark:text-gray-300">
+                  Released
+                </p>
+                <p className="text-medium-black text-sm dark:text-gray-100">
+                  {movie.omdbData.Released}
+                </p>
+                <p className="text-gray-600 text-sm dark:text-gray-300">
+                  Runtime
+                </p>
+                <p className="text-medium-black text-sm dark:text-gray-100">
+                  {movie.omdbData.Runtime}
+                </p>
+                <p className="text-gray-600 text-sm dark:text-gray-300">
+                  Origin
+                </p>
+                <p className="text-medium-black text-lg dark:text-gray-100">
+                  {getFlagsFromCodes(movie.origin_country)}
+                </p>
                 <p className="text-gray-600 text-sm dark:text-gray-300">
                   Rating
                 </p>
@@ -114,22 +131,10 @@ const MovieDetail = ({ isOpen, onClose, movie }) => {
                   {movie.omdbData.imdbRating}
                 </p>
                 <p className="text-gray-600 text-sm dark:text-gray-300">
-                  Released
+                  Votes
                 </p>
                 <p className="text-medium-black text-sm dark:text-gray-100">
-                  {movie.omdbData.Released}
-                </p>
-                <p className="text-gray-600 text-sm dark:text-gray-300">
-                  Runtime
-                </p>
-                <p className="text-medium-black text-sm dark:text-gray-100">
-                  {movie.omdbData.Runtime}
-                </p>
-                <p className="text-gray-600 text-sm dark:text-gray-300">
-                  Origin
-                </p>
-                <p className="text-medium-black text-lg dark:text-gray-100">
-                  {getFlagsFromCodes(movie.origin_country)}
+                  {movie.omdbData.imdbVotes}
                 </p>
               </div>
             ) : (

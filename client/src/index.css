@@ -12,3 +12,35 @@
 * {
   font-family: "Outfit", sans-serif;
 }
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 4px;
+  height: 36px;
+  background-color: #343434;
+  border-radius: 15%;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 4px;
+  height: 36px;
+  background-color: #343434;
+  border-radius: 15%;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.custom-shadow {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}

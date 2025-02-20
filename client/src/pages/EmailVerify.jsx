@@ -76,7 +76,7 @@ const EmailVerify = () => {
   }, [isLoggedIn, userData]);
 
   return (
-    <div className="flex min-h-screen w-full dark:bg-dark-black">
+    <div className="flex min-h-screen w-full dark:bg-medium-black">
       {/* Left Side */}
       <div className="w-1/2 h-screen flex items-center justify-center p-5">
         <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">

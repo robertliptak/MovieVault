@@ -129,7 +129,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full dark:bg-dark-black">
+    <div className="flex min-h-screen w-full dark:bg-medium-black">
       {/* Left Side */}
       <div className="w-1/2 h-screen flex items-center justify-center p-5">
         <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
@@ -161,7 +161,7 @@ const ResetPassword = () => {
               <input
                 className={`outline-none border ${
                   errors.email ? "border-red-500" : "border-transparent"
-                } dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200`}
+                } dark:bg-light-black dark:text-gray-200 dark:placeholder:text-gray-400 w-full px-5 py-2.5 rounded-md bg-gray-200`}
                 type="email"
                 placeholder="Email"
                 onChange={(e) => setEmail(e.target.value)}
@@ -230,7 +230,7 @@ const ResetPassword = () => {
                 <input
                   className={`outline-none border ${
                     errors.password ? "border-red-500" : "border-transparent"
-                  } dark:bg-medium-black dark:text-gray-200 dark:placeholder:text-gray-600 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10`}
+                  } dark:bg-light-black dark:text-gray-200 dark:placeholder:text-gray-400 w-full px-5 py-2.5 rounded-md bg-gray-200 pr-10`}
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -241,7 +241,7 @@ const ResetPassword = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-900 dark:hover:text-gray-400 transition-all duration-200"
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-all duration-200"
                 >
                   {showPassword ? (
                     <FaEyeSlash className="cursor-pointer" />

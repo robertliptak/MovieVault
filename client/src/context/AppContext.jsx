@@ -8,6 +8,7 @@ export const AppContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(false);
+  const [userMovies, setUserMovies] = useState([]);
 
   const getAuthState = async () => {
     try {
@@ -33,6 +34,19 @@ export const AppContextProvider = (props) => {
     }
   };
 
+  const getUserMovies = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/user/movies`);
+      if (data.success) {
+        setUserMovies(data.movies);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   useEffect(() => {
     getAuthState();
   }, []);
@@ -42,8 +56,10 @@ export const AppContextProvider = (props) => {
     isLoggedIn,
     setIsLoggedIn,
     userData,
+    userMovies,
     setUserData,
     getUserData,
+    getUserMovies,
   };
 
   return (

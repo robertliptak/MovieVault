@@ -8,18 +8,23 @@ import React, {
 } from "react";
 import { AppContext } from "../context/AppContext";
 import { LuSearch } from "react-icons/lu";
-import { ImSpinner2 } from "react-icons/im"; // Import spinner icon
+import { ImSpinner2 } from "react-icons/im";
+import { FaPlus } from "react-icons/fa";
 import _ from "lodash";
 import MovieDetail from "./MovieDetail";
+import { toast } from "react-toastify";
+import AddMovie from "./AddMovie";
 
 const SearchBar = () => {
-  const { backendUrl } = useContext(AppContext);
+  const { backendUrl, getUserMovies } = useContext(AppContext);
   const [title, setTitle] = useState("");
   const [movies, setMovies] = useState([]);
   const [showResults, setShowResults] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [loadingMovieId, setLoadingMovieId] = useState(null); // Track which movie is being fetched
+  const [addMovie, setAddMovie] = useState(null);
+  const [loadingMovieId, setLoadingMovieId] = useState(null);
 
   const searchRef = useRef(null);
 
@@ -60,7 +65,7 @@ const SearchBar = () => {
   };
 
   const fetchMovieDetail = async (movieId) => {
-    setLoadingMovieId(movieId); // Set loading state for clicked movie
+    setLoadingMovieId(movieId);
 
     try {
       const res = await axios.post(
@@ -72,11 +77,11 @@ const SearchBar = () => {
       );
 
       setSelectedMovie(res.data);
-      setIsModalOpen(true);
+      setIsDetailModalOpen(true);
     } catch (error) {
-      console.error("Error fetching movie details:", error);
+      toast.error(error.message);
     } finally {
-      setLoadingMovieId(null); // Reset loading state after request completes
+      setLoadingMovieId(null);
     }
   };
 
@@ -90,7 +95,6 @@ const SearchBar = () => {
     );
   };
 
-  // Close results when clicking outside the search bar
   const handleClickOutside = (event) => {
     if (searchRef.current && !searchRef.current.contains(event.target)) {
       setShowResults(false);
@@ -114,9 +118,11 @@ const SearchBar = () => {
   return (
     <div
       ref={searchRef}
-      className="w-full max-w-md mx-auto bg-gray-200/50 dark:bg-light-black/50 rounded-xl"
+      className={`relative w-full max-w-md mx-auto bg-gray-200/50 dark:bg-light-black/50 ${
+        showResults ? "rounded-t-xl" : "rounded-xl"
+      }`}
     >
-      <div className="m-2 w-full flex items-center px-2 gap-2">
+      <div className="m-2 flex items-center px-2 gap-2">
         <LuSearch className="text-gray-700 dark:text-gray-300 text-xl" />
         <input
           onChange={onChangeHandler}
@@ -124,59 +130,80 @@ const SearchBar = () => {
           value={title}
           type="text"
           className="w-full bg-transparent outline-none py-2 dark:text-gray-100 dark:placeholder:text-gray-300"
-          placeholder="Search for a movie"
+          placeholder="I've recently watched..."
         />
       </div>
 
       {showResults && movies.length > 0 && (
-        <div className="mt-2 max-h-120 overflow-y-auto">
-          <hr className="text-gray-400 dark:text-gray-600" />
+        <div className="absolute top-full left-0 w-full border-t border-gray-400 dark:border-gray-600 bg-gray-200/50 dark:bg-light-black/50 backdrop-blur-md rounded-b-lg max-h-120 overflow-y-auto z-50 no-scrollbar">
           {movies.map((movie) => (
             <div
               key={movie.id}
               className="flex items-center gap-3 px-4 py-2 last:border-none hover:bg-gray-200/60 dark:hover:bg-light-black/60 transition-all duration-200"
             >
               {loadingMovieId === movie.id ? (
-                <div className="w-full flex items-center justify-center py-4">
+                <div className="w-full flex items-center justify-center py-4.5">
                   <ImSpinner2 className="animate-spin text-gray-700 dark:text-gray-300 text-2xl" />
                 </div>
               ) : (
-                <>
-                  <img
-                    src={
-                      movie.poster_path
-                        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                        : "/default_poster.jpg"
-                    }
-                    alt={movie.title}
-                    className="w-12 h-16 object-cover rounded cursor-pointer"
-                    onClick={() => fetchMovieDetail(movie.id)}
-                  />
-                  <div>
-                    <p
-                      className="text-sm font-medium dark:text-gray-100 cursor-pointer"
-                      dangerouslySetInnerHTML={{
-                        __html: highlightText(movie.title, title),
-                      }}
+                <div className="flex justify-between w-full items-center">
+                  <div className="flex items-center gap-2 justify-center">
+                    <img
+                      src={
+                        movie.poster_path
+                          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                          : "/default_poster.jpg"
+                      }
+                      alt={movie.title}
+                      className="w-12 h-16 object-cover rounded cursor-pointer"
                       onClick={() => fetchMovieDetail(movie.id)}
                     />
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                      {movie.release_date
-                        ? movie.release_date.slice(0, 4)
-                        : "N/A"}
-                    </p>
+                    <div>
+                      <p
+                        className="text-sm font-medium dark:text-gray-100 cursor-pointer"
+                        dangerouslySetInnerHTML={{
+                          __html: highlightText(movie.title, title),
+                        }}
+                        onClick={() => fetchMovieDetail(movie.id)}
+                      />
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {movie.release_date
+                          ? movie.release_date.slice(0, 4)
+                          : "N/A"}
+                      </p>
+                    </div>
                   </div>
-                </>
+                  <button
+                    onClick={() => {
+                      setIsAddModalOpen(true);
+                      setAddMovie({
+                        title: movie.title,
+                        poster_path: movie.poster_path,
+                        tmdbId: movie.id,
+                      });
+                    }}
+                    className="rounded-full p-2 bg-gray-300 hover:bg-gray-400 transition-all duration-200 cursor-pointer"
+                  >
+                    <FaPlus />
+                  </button>
+                </div>
               )}
             </div>
           ))}
         </div>
       )}
-      {isModalOpen && selectedMovie && (
+      {isDetailModalOpen && selectedMovie && (
         <MovieDetail
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isDetailModalOpen}
+          onClose={() => setIsDetailModalOpen(false)}
           movie={selectedMovie}
+        />
+      )}
+      {isAddModalOpen && (
+        <AddMovie
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          movie={addMovie}
         />
       )}
     </div>

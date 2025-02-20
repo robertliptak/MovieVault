@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -6,8 +6,17 @@ import EmailVerify from "./pages/EmailVerify";
 import ResetPassword from "./pages/ResetPassword";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AppContext } from "./context/AppContext";
 
 const App = () => {
+  const { isLoggedIn, getUserMovies } = useContext(AppContext);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      getUserMovies();
+    }
+  }, [isLoggedIn]);
+
   return (
     <div>
       <ToastContainer />

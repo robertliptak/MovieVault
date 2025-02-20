@@ -4,6 +4,7 @@ import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import ThemeToggle from "./ThemeToggle";
+import SearchBar from "./SearchBar";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -42,11 +43,12 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full flex justify-between items-center px-24 py-4 absolute top-0 bg-white">
+    <div className="w-full flex justify-between items-center px-24 py-4 absolute top-0 bg-white dark:bg-medium-black transition-all duration-500">
       <img src="/MovieVault_logo.png" className="w-10 h-10" />
+      <SearchBar />
       <div className="flex items-center justify-center gap-3">
         {userData ? (
-          <div className="w-10 h-10 flex justify-center items-center rounded-full bg-black text-white relative group">
+          <div className="w-10 h-10 flex justify-center items-center rounded-full bg-blue-800 text-white relative group">
             {userData.name[0].toUpperCase()}
             <div className="absolute hidden group-hover:block top-1 z-10 text-black rounded pt-10">
               <ul className="list-none m-0 p-2 bg-gray-100 text-sm rounded-md">
