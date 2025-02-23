@@ -43,7 +43,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full flex justify-between items-center px-24 py-4 absolute top-0 bg-white dark:bg-medium-black transition-all duration-500">
+    <div className="w-full flex justify-between items-center px-24 py-4 absolute top-0 bg-gray-100 dark:bg-medium-black transition-all duration-500">
       <img src="/MovieVault_logo.png" className="w-10 h-10" />
       <SearchBar />
       <div className="flex items-center justify-center gap-3">

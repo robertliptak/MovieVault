@@ -204,6 +204,8 @@ const SearchBar = () => {
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
           movie={addMovie}
+          setShowResults={() => setShowResults(false)}
+          setTitle={() => setTitle("")}
         />
       )}
     </div>

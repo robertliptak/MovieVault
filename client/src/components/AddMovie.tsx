@@ -8,16 +8,23 @@ import { FaAnglesRight, FaCalendar } from "react-icons/fa6";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 
-const AddMovie = ({ isOpen, onClose, movie }) => {
+const AddMovie = ({ isOpen, onClose, movie, setShowResults, setTitle }) => {
   if (!isOpen) return null;
 
   const { getUserMovies, backendUrl } = useContext(AppContext);
   const [rating, setRating] = useState(0);
   const [watchTime, setWatchTime] = useState<Date | undefined>(undefined);
   const [isCalendarShown, setIsCalendarShown] = useState(false);
-  const [description, setDescription] = useState(""); // State for description
+  const [description, setDescription] = useState("");
+  const [watchTimeError, setWatchTimeError] = useState(false);
 
   const addMovie = async () => {
+    if (!watchTime) {
+      setWatchTimeError(true);
+      return;
+    }
+    setWatchTimeError(false);
+
     try {
       await axios.post(`${backendUrl}/api/user/add-movie`, {
         tmdbId: movie.tmdbId,
@@ -30,6 +37,8 @@ const AddMovie = ({ isOpen, onClose, movie }) => {
 
       getUserMovies();
       onClose();
+      setShowResults();
+      setTitle();
     } catch (error) {
       toast.error(error.message);
     }
@@ -50,7 +59,7 @@ const AddMovie = ({ isOpen, onClose, movie }) => {
   };
 
   const getRatingColor = (rating) => {
-    const normalizedRating = rating >= 0 && rating <= 10 ? rating / 10 : 0;
+    const normalizedRating = rating >= 0 && rating <= 5 ? rating / 5 : 0;
     return getHSLColor(normalizedRating);
   };
 
@@ -60,7 +69,7 @@ const AddMovie = ({ isOpen, onClose, movie }) => {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -50 }}
-        className="bg-white dark:bg-light-black p-1 rounded-2xl shadow-xl w-full max-w-md relative"
+        className="bg-white dark:bg-medium-black p-1 rounded-2xl shadow-xl w-full max-w-md relative"
       >
         <button
           className="absolute top-3 right-3 text-gray-500 dark:text-gray-300 hover:text-gray-800 transition-all duration-200 dark:hover:text-gray-100 cursor-pointer"
@@ -79,20 +88,20 @@ const AddMovie = ({ isOpen, onClose, movie }) => {
             </p>
           </div>
 
-          <hr className="my-1 text-white dark:text-light-black" />
+          <hr className="my-1 text-white dark:text-medium-black" />
 
           <div className="p-4">
             <div className="flex flex-col gap-4 w-full">
               <div className="w-full">
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   Your Rating:{" "}
-                  <span className="text-base text-dark-black font-semibold">
+                  <span className="text-base text-dark-black dark:text-gray-100 font-semibold">
                     {rating.toFixed(1)}
                   </span>
                 </label>
                 <div className="relative flex items-center">
                   {rating === 0 && (
-                    <div className="absolute flex justify-center items-center gap-1 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-900 dark:text-gray-400 text-sm pointer-events-none animate-pulse">
+                    <div className="absolute flex justify-center items-center gap-1 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-900 text-sm pointer-events-none animate-pulse">
                       Drag to Rate <FaAnglesRight />
                     </div>
                   )}
@@ -100,15 +109,15 @@ const AddMovie = ({ isOpen, onClose, movie }) => {
                   <input
                     type="range"
                     min="0"
-                    max="10"
-                    step="0.1"
+                    max="5" // Changed max from 10 to 5
+                    step="0.1" // Adjusted for half-star ratings
                     value={rating}
                     onChange={(e) => setRating(Number(e.target.value))}
                     className="w-full h-9 rounded-lg appearance-none cursor-pointer"
                     style={{
                       background: `linear-gradient(to right, ${getRatingColor(
                         rating
-                      )} ${rating * 10}%, #ddd ${rating * 10}%)`,
+                      )} ${rating * 20}%, #ddd ${rating * 20}%)`, // Updated percentage
                     }}
                   />
                 </div>
@@ -121,17 +130,33 @@ const AddMovie = ({ isOpen, onClose, movie }) => {
                 <div className="relative">
                   <div
                     onClick={() => setIsCalendarShown((prev) => !prev)}
-                    className={`w-full bg-gray-200 rounded-lg py-2 px-4 relative flex items-center cursor-pointer mb-2 ${
-                      isCalendarShown
-                        ? "border border-blue-800"
-                        : "border border-gray-200"
-                    } ${!watchTime && "text-gray-500"}`}
+                    className={`w-full bg-gray-200 dark:bg-light-black rounded-lg py-2 px-4 relative flex items-center cursor-pointer 
+                              ${
+                                isCalendarShown
+                                  ? "border border-blue-800"
+                                  : "border dark:border-light-black border-gray-200"
+                              } 
+                              ${
+                                watchTime
+                                  ? "dark:text-gray-200"
+                                  : "text-gray-500 dark:text-gray-300"
+                              } 
+                              ${
+                                watchTimeError
+                                  ? "border border-red-500 dark:border-red-500"
+                                  : "mb-2"
+                              }`}
                   >
                     <p className="text-md">
                       {watchTime ? formatDate(watchTime) : "Select a date"}
                     </p>
                     <FaCalendar className="absolute right-4" />
                   </div>
+                  {watchTimeError && (
+                    <p className="text-sm text-red-500">
+                      Watch time is required
+                    </p>
+                  )}
                   {isCalendarShown && (
                     <div className="absolute flex justify-center items-center left-0 right-0 z-10 mt-1">
                       <DayPicker
@@ -140,6 +165,7 @@ const AddMovie = ({ isOpen, onClose, movie }) => {
                         onSelect={(date) => {
                           setWatchTime(date);
                           setIsCalendarShown(false);
+                          setWatchTimeError(false);
                         }}
                         className="rounded-xl bg-white custom-shadow px-4 py-2"
                       />
@@ -155,14 +181,14 @@ const AddMovie = ({ isOpen, onClose, movie }) => {
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full h-24 p-2 border border-gray-300 rounded-lg dark:bg-light-black dark:border-gray-600 dark:text-white placeholder:text-gray-500"
+                  className="w-full h-24 py-2 px-4 outline-none rounded-lg bg-gray-200 dark:bg-light-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-300"
                   placeholder="Enter a description"
                 />
               </div>
             </div>
           </div>
 
-          <hr className="my-1 text-white dark:text-light-black" />
+          <hr className="my-1 text-white dark:text-medium-black" />
 
           <div className="w-full flex justify-end items-center gap-2 px-4 pb-4">
             <button

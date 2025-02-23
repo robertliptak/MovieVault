@@ -6,11 +6,11 @@ const MoviesList = () => {
   const { userMovies } = useContext(AppContext);
 
   return (
-    <div>
+    <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-4 p-4">
       {userMovies.map((movie) => (
-        <h1 key={movie.imdbId}>
+        <div key={movie.imdbId}>
           <MovieCard movie={movie} />
-        </h1>
+        </div>
       ))}
     </div>
   );

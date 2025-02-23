@@ -35,14 +35,7 @@ export const addMovieToUser = async (req, res) => {
     userId,
   } = req.body;
 
-  if (
-    !tmdbId ||
-    !title ||
-    !posterPath ||
-    !description ||
-    !watchTime ||
-    userRating == null
-  ) {
+  if (!tmdbId || !title || !watchTime || userRating == null) {
     return res.json({ success: false, message: "Missing required fields" });
   }
 
