@@ -7,8 +7,6 @@ const MovieDetail = ({ isOpen, onClose, movie }) => {
 
   if (!isOpen) return null;
 
-  console.log(movie);
-
   const getFlagsFromCodes = (countryCodes) => {
     return countryCodes
       .map((code) => {

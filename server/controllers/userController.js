@@ -53,9 +53,7 @@ export const addMovieToUser = async (req, res) => {
     const tmdbData = await tmdbResponse.json();
 
     if (!tmdbResponse.ok) {
-      return res
-        .status(tmdbResponse.status)
-        .json({ success: false, message: tmdbData.status_message });
+      return res.json({ success: false, message: tmdbData.status_message });
     }
 
     const imdbId = tmdbData.imdb_id || null;
@@ -79,13 +77,13 @@ export const addMovieToUser = async (req, res) => {
       { new: true }
     );
 
-    return res.status(201).json({
+    return res.json({
       success: true,
       message: "Movie added to watched list",
       movie: newMovie,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.json({
       success: false,
       message: "Error adding movie",
       error: error.message,
@@ -100,20 +98,102 @@ export const getUserMovies = async (req, res) => {
     const user = await userModel.findById(userId).populate("watchedMovies");
 
     if (!user) {
-      return res.status(404).json({
+      return res.json({
         success: false,
         message: "User not found",
       });
     }
 
-    return res.status(200).json({
+    return res.json({
       success: true,
       movies: user.watchedMovies,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.json({
       success: false,
       message: "Error fetching movies",
+      error: error.message,
+    });
+  }
+};
+
+export const deleteMovieFromUser = async (req, res) => {
+  const { userId, movieId } = req.body;
+
+  if (!movieId || !userId) {
+    return res.json({ success: false, message: "Missing required fields" });
+  }
+
+  try {
+    const deletedMovie = await movieModel.findByIdAndDelete(movieId);
+
+    if (!deletedMovie) {
+      return res.json({
+        success: false,
+        message: "Movie not found",
+      });
+    }
+
+    await userModel.findByIdAndUpdate(
+      userId,
+      { $pull: { watchedMovies: movieId } },
+      { new: true }
+    );
+
+    return res.json({
+      success: true,
+      message: "Movie deleted successfully",
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const updateMovieForUser = async (req, res) => {
+  const {
+    movieId,
+    userId,
+    title,
+    description,
+    posterPath,
+    watchTime,
+    userRating,
+  } = req.body;
+
+  if (!movieId || !userId) {
+    return res.json({ success: false, message: "Missing required fields" });
+  }
+
+  try {
+    const updatedMovie = await movieModel.findByIdAndUpdate(
+      movieId,
+      {
+        title,
+        description,
+        posterPath,
+        watchTime,
+        userRating,
+      },
+      { new: true }
+    );
+
+    if (!updatedMovie) {
+      return res.json({
+        success: false,
+        message: "Movie not found",
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Movie updated successfully",
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
       error: error.message,
     });
   }

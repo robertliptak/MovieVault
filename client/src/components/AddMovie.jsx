@@ -13,7 +13,7 @@ const AddMovie = ({ isOpen, onClose, movie, setShowResults, setTitle }) => {
 
   const { getUserMovies, backendUrl } = useContext(AppContext);
   const [rating, setRating] = useState(0);
-  const [watchTime, setWatchTime] = useState<Date | undefined>(undefined);
+  const [watchTime, setWatchTime] = useState(new Date());
   const [isCalendarShown, setIsCalendarShown] = useState(false);
   const [description, setDescription] = useState("");
   const [watchTimeError, setWatchTimeError] = useState(false);
@@ -44,8 +44,8 @@ const AddMovie = ({ isOpen, onClose, movie, setShowResults, setTitle }) => {
     }
   };
 
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
+  const formatDate = (date) => {
+    const options = {
       year: "numeric",
       month: "short",
       day: "2-digit",
@@ -79,7 +79,7 @@ const AddMovie = ({ isOpen, onClose, movie, setShowResults, setTitle }) => {
         </button>
 
         <div className="dark:bg-medium-black rounded-2xl">
-          <div className="px-4 pt-4">
+          <div className="pl-4 pr-6 pt-4">
             <h1 className="font-semibold text-xl dark:text-gray-100">
               {movie.title}
             </h1>
