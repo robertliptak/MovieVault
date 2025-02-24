@@ -62,14 +62,14 @@ const Sidebar = () => {
         {isLoggedIn ? (
           <h1
             onClick={() => logout()}
-            className="dark:text-white cursor-pointer hover:text-light-blue transition-all duration-200"
+            className="dark:text-white cursor-pointer hover:text-dark-blue dark:hover:text-light-blue transition-all duration-200"
           >
             Log out
           </h1>
         ) : (
           <h1
             onClick={() => navigate("/login")}
-            className="dark:text-white cursor-pointer hover:text-light-blue transition-all duration-200"
+            className="dark:text-white cursor-pointer hover:text-dark-blue dark:hover:text-light-blue transition-all duration-200"
           >
             Log in
           </h1>
@@ -77,7 +77,7 @@ const Sidebar = () => {
         {!userData.isAccountVerified && (
           <h1
             onClick={() => sendVerificationOtp()}
-            className="dark:text-white cursor-pointer hover:text-light-blue transition-all duration-200 mt-2"
+            className="dark:text-white cursor-pointer hover:text-dark-blue dark:hover:text-light-blue transition-all duration-200 mt-2"
           >
             Verify email
           </h1>

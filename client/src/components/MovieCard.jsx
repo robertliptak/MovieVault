@@ -77,7 +77,7 @@ const MovieCard = ({ movie }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-light-black px-4 py-3 rounded-2xl relative">
+    <div className="bg-white dark:bg-medium-black px-4 py-3 rounded-2xl relative">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white bg-opacity-75 dark:bg-light-black dark:bg-opacity-75 z-10">
           <ImSpinner2 className="animate-spin text-gray-600" size={30} />
