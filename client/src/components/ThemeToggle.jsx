@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
-import { FaMoon, FaSun } from "react-icons/fa";
+import { FaMoon } from "react-icons/fa";
+import { IoSunnyOutline } from "react-icons/io5";
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -8,9 +9,13 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full cursor-pointer bg-gray-200 dark:bg-light-black transition-all duration-300"
+      className="p-2 rounded-full cursor-pointer transition-all duration-300"
     >
-      {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon />}
+      {theme === "dark" ? (
+        <IoSunnyOutline className="text-white text-2xl hover:text-light-blue transition-all duration-300" />
+      ) : (
+        <FaMoon className="hover:text-dark-blue transition-all duration-300" />
+      )}
     </button>
   );
 };

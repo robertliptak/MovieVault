@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import MovieCard from "./MovieCard";
 import { LuSearch } from "react-icons/lu";
+import { FaSort } from "react-icons/fa";
 
 const MoviesList = () => {
   const { userMovies } = useContext(AppContext);
@@ -44,11 +45,12 @@ const MoviesList = () => {
 
   return (
     <div className="p-4 space-y-2 w-full">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="dark:text-gray-100 font-semibold text-2xl">
-          Your movies
-        </h1>
-        <div className="relative w-50">
+      <div className="mb-4 flex items-center jus gap-6">
+        <button className="flex justify-center items-center py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-xl cursor-pointer">
+          <FaSort className="text-white" />
+          <p className=" text-white">Sort by</p>
+        </button>
+        <div className="relative flex justify-center items-center w-50">
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
             <LuSearch className="text-gray-700 dark:text-gray-300 " />
           </div>
@@ -57,7 +59,7 @@ const MoviesList = () => {
             placeholder="Search by title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 p-2 border bg-gray-200/50 dark:bg-light-black/50 border-gray-300 rounded-lg dark:border-gray-600 dark:text-gray-100 dark:placeholder:text-gray-300 outline-none"
+            className="w-full pl-8 p-2 border text-sm bg-gray-200/50 dark:bg-light-black/50 border-gray-300 rounded-lg dark:border-gray-600 dark:text-gray-100 dark:placeholder:text-gray-300 outline-none"
           />
         </div>
       </div>
@@ -69,7 +71,7 @@ const MoviesList = () => {
           </h2>
           <hr className="text-gray-300 dark:text-gray-600 mb-6" />
 
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-14">
+          <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-14">
             {movies.map((movie) => (
               <MovieCard key={movie._id} movie={movie} />
             ))}
