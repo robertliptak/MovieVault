@@ -1,8 +1,9 @@
 import fetch from "node-fetch";
+import movieModel from "../models/movieModel.js";
 
 export const getMoviesByTitle = async (req, res) => {
   try {
-    const { title } = req.body;
+    const { title, userId } = req.body;
 
     if (!title) {
       return res.status(400).json({ error: "Title is required" });
@@ -26,7 +27,27 @@ export const getMoviesByTitle = async (req, res) => {
       return res.status(response.status).json({ error: data.status_message });
     }
 
-    return res.json(data);
+    const movies = data.results;
+
+    if (!movies.length) {
+      return res.json({ movies: [], message: "No movies found." });
+    }
+
+    let userMovies = [];
+    if (userId) {
+      userMovies = await movieModel.find({ userId }, "tmdbId _id");
+    }
+
+    const userMoviesMap = new Map(
+      userMovies.map((movie) => [movie.tmdbId, movie._id])
+    );
+
+    const moviesWithIds = movies.map((movie) => ({
+      ...movie,
+      movieId: userMoviesMap.get(movie.id?.toString()) || null,
+    }));
+
+    return res.json({ results: moviesWithIds });
   } catch (error) {
     console.error("Error fetching movies:", error);
     return res.status(500).json({ error: "Internal server error" });

@@ -9,20 +9,23 @@ import React, {
 import { AppContext } from "../context/AppContext";
 import { LuSearch } from "react-icons/lu";
 import { ImSpinner2 } from "react-icons/im";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaPen } from "react-icons/fa";
 import _ from "lodash";
 import MovieDetail from "./MovieDetail";
 import { toast } from "react-toastify";
 import AddMovie from "./AddMovie";
+import EditMovie from "./EditMovie";
 
 const SearchBar = () => {
-  const { backendUrl, getUserMovies } = useContext(AppContext);
+  const { backendUrl } = useContext(AppContext);
   const [title, setTitle] = useState("");
   const [movies, setMovies] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [movieToEdit, setMovieToEdit] = useState(null);
   const [addMovie, setAddMovie] = useState(null);
   const [loadingMovieId, setLoadingMovieId] = useState(null);
 
@@ -48,7 +51,6 @@ const SearchBar = () => {
         const sortedMovies = res.data.results
           ? res.data.results.sort((a, b) => b.vote_count - a.vote_count)
           : [];
-
         setMovies(sortedMovies);
         setShowResults(true);
       } catch (error) {
@@ -64,24 +66,35 @@ const SearchBar = () => {
     debouncedSearch(newTitle);
   };
 
-  const fetchMovieDetail = async (movieId) => {
-    setLoadingMovieId(movieId);
+  const fetchMovieDetail = async (tmdbId, movieId) => {
+    setLoadingMovieId(tmdbId);
 
     try {
       const res = await axios.post(
         `${backendUrl}/api/movies/movie-detail`,
-        { movieId },
+        { movieId: tmdbId },
         {
           headers: { "Content-Type": "application/json" },
         }
       );
 
-      setSelectedMovie(res.data);
+      setSelectedMovie({ ...res.data, movieId });
       setIsDetailModalOpen(true);
     } catch (error) {
       toast.error(error.message);
     } finally {
       setLoadingMovieId(null);
+    }
+  };
+
+  const fetchMovieToEdit = async (movieId) => {
+    try {
+      const res = await axios.get(`${backendUrl}/api/user/movie/${movieId}`);
+
+      setMovieToEdit(res.data.movie);
+      setIsEditModalOpen(true);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to fetch movie");
     }
   };
 
@@ -118,8 +131,8 @@ const SearchBar = () => {
   return (
     <div
       ref={searchRef}
-      className={`relative w-full max-w-md mx-auto bg-gray-200/50 dark:bg-light-black/50 ${
-        showResults ? "rounded-t-xl" : "rounded-xl"
+      className={`relative w-full max-w-md mx-auto bg-gray-300/50 dark:bg-light-black/50 ${
+        movies.length > 0 && showResults ? "rounded-t-xl" : "rounded-xl"
       }`}
     >
       <div className="m-2 flex items-center px-2 gap-2">
@@ -135,7 +148,7 @@ const SearchBar = () => {
       </div>
 
       {showResults && movies.length > 0 && (
-        <div className="absolute top-full left-0 w-full border-t border-gray-400 dark:border-gray-600 bg-gray-200/50 dark:bg-light-black/50 backdrop-blur-md rounded-b-lg max-h-120 overflow-y-auto z-50 no-scrollbar">
+        <div className="absolute top-full left-0 w-full border-t border-gray-400 dark:border-gray-600 bg-gray-300/50 dark:bg-light-black/50 backdrop-blur-md rounded-b-lg max-h-120 overflow-y-auto z-50 no-scrollbar">
           {movies.map((movie) => (
             <div
               key={movie.id}
@@ -156,7 +169,7 @@ const SearchBar = () => {
                       }
                       alt={movie.title}
                       className="w-12 h-16 object-cover rounded cursor-pointer"
-                      onClick={() => fetchMovieDetail(movie.id)}
+                      onClick={() => fetchMovieDetail(movie.id, movie.movieId)}
                     />
                     <div>
                       <p
@@ -173,19 +186,28 @@ const SearchBar = () => {
                       </p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      setIsAddModalOpen(true);
-                      setAddMovie({
-                        title: movie.title,
-                        poster_path: movie.poster_path,
-                        tmdbId: movie.id,
-                      });
-                    }}
-                    className="rounded-full p-2 bg-gray-300 hover:bg-gray-400 transition-all duration-200 cursor-pointer"
-                  >
-                    <FaPlus />
-                  </button>
+                  {movie.movieId ? (
+                    <button
+                      onClick={() => fetchMovieToEdit(movie.movieId)}
+                      className="rounded-full p-2 bg-gray-300 hover:bg-gray-400 transition-all duration-200 cursor-pointer"
+                    >
+                      <FaPen />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsAddModalOpen(true);
+                        setAddMovie({
+                          title: movie.title,
+                          poster_path: movie.poster_path,
+                          id: movie.id,
+                        });
+                      }}
+                      className="rounded-full p-2 bg-gray-300 hover:bg-gray-400 transition-all duration-200 cursor-pointer"
+                    >
+                      <FaPlus />
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -197,6 +219,8 @@ const SearchBar = () => {
           isOpen={isDetailModalOpen}
           onClose={() => setIsDetailModalOpen(false)}
           movie={selectedMovie}
+          setTitle={() => setTitle("")}
+          hideResults={() => setShowResults(false)}
         />
       )}
       {isAddModalOpen && (
@@ -206,6 +230,13 @@ const SearchBar = () => {
           movie={addMovie}
           setShowResults={() => setShowResults(false)}
           setTitle={() => setTitle("")}
+        />
+      )}
+      {isEditModalOpen && (
+        <EditMovie
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          movie={movieToEdit}
         />
       )}
     </div>

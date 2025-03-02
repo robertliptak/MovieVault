@@ -3,7 +3,6 @@ import { AppContext } from "../context/AppContext";
 import MovieCard from "./MovieCard";
 import { LuSearch } from "react-icons/lu";
 import { FaSort } from "react-icons/fa";
-import { FaChevronDown } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa"; // Checkmark for active sort option
 
 const MoviesList = () => {
@@ -68,7 +67,7 @@ const MoviesList = () => {
         <div className="relative">
           <button
             onClick={() => setShowSortMenu(!showSortMenu)}
-            className="flex justify-center items-center text-sm py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-xl cursor-pointer text-white"
+            className="flex justify-center items-center text-sm py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-md cursor-pointer text-white"
           >
             <FaSort />
             <p>Sort by</p>
@@ -76,7 +75,7 @@ const MoviesList = () => {
 
           {/* Dropdown Menu */}
           {showSortMenu && (
-            <div className="absolute left-0 mt-2 px-2 pt-2 pb-1 border border-gray-300 dark:border-light-black bg-gray-100 dark:bg-dark-black rounded-xl shadow-md z-10 w-56">
+            <div className="absolute left-0 mt-2 px-2 pt-2 pb-1 border border-gray-300 dark:border-light-black bg-gray-100 dark:bg-dark-black rounded-md shadow-md z-10 w-56">
               <ul className="text-sm text-gray-900 dark:text-gray-200">
                 {[
                   {
@@ -93,7 +92,7 @@ const MoviesList = () => {
                   <li
                     key={value}
                     onClick={() => handleSortChange(value)}
-                    className={`p-2 flex justify-between items-center rounded-xl mb-1 ${
+                    className={`p-2 flex justify-between items-center rounded-md mb-1 ${
                       sortOption === value
                         ? "dark:bg-light-black bg-gray-300"
                         : "dark:bg-dark-black bg-gray-100"
@@ -107,7 +106,6 @@ const MoviesList = () => {
           )}
         </div>
 
-        {/* Search Input */}
         <div className="relative flex justify-center items-center w-50">
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
             <LuSearch className="text-gray-700 dark:text-gray-300" />
@@ -117,13 +115,13 @@ const MoviesList = () => {
             placeholder="Search by title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 p-2 text-sm bg-gray-200/50 dark:bg-light-black/50 border-gray-300 rounded-lg dark:border-gray-600 dark:text-gray-100 dark:placeholder:text-gray-300 outline-none"
+            className="w-full pl-8 p-2 text-sm bg-gray-300/50 dark:bg-light-black  rounded-md  dark:text-gray-100 dark:placeholder:text-gray-300 outline-none"
           />
         </div>
         <div className="flex items-center justify-center gap-2">
           <button
             onClick={() => setGroupByMonth(!groupByMonth)}
-            className={`w-4 h-4 border-2 border-gray-700 rounded cursor-pointer dark:border-gray-300 ${
+            className={`w-4 h-4 border-2 border-gray-700 rounded-md cursor-pointer dark:border-gray-300 ${
               groupByMonth && "bg-gray-700 dark:bg-gray-300"
             }`}
           >

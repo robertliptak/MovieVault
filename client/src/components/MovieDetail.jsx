@@ -1,9 +1,20 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { IoClose } from "react-icons/io5";
+import { FaPlus, FaPen } from "react-icons/fa";
+import { AppContext } from "../context/AppContext";
+import { toast } from "react-toastify";
+import axios from "axios";
+import EditMovie from "./EditMovie";
+import AddMovie from "./AddMovie";
 
-const MovieDetail = ({ isOpen, onClose, movie }) => {
+const MovieDetail = ({ isOpen, onClose, movie, setTitle, hideResults }) => {
+  const { backendUrl } = useContext(AppContext);
+
   const [isSummaryShowed, setIsSummaryShowed] = useState(false);
+  const [movieToEdit, setMovieToEdit] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   if (!isOpen) return null;
 
@@ -20,6 +31,19 @@ const MovieDetail = ({ isOpen, onClose, movie }) => {
           .join("");
       })
       .join(" ");
+  };
+
+  const fetchMovie = async () => {
+    try {
+      const res = await axios.get(
+        `${backendUrl}/api/user/movie/${movie.movieId}`
+      );
+
+      setMovieToEdit(res.data.movie);
+      setIsEditModalOpen(true);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to fetch movie");
+    }
   };
 
   return (
@@ -157,16 +181,49 @@ const MovieDetail = ({ isOpen, onClose, movie }) => {
             <div className="flex items-center justify-center gap-2">
               <button
                 onClick={onClose}
-                className="py-2 px-4 rounded-md text-sm bg-gray-200 border border-gray-300 text-dark-black hover:bg-gray-300 transition-all duration-300  cursor-pointer dark:text-white dark:bg-light-black dark:border-none dark:hover:bg-dark-black"
+                className="py-2 px-4 rounded-md text-sm bg-gray-200 border border-gray-300 text-dark-black transition-all duration-300  cursor-pointer dark:text-white dark:bg-light-black dark:border-none"
               >
                 Cancel
               </button>
-              <button className="py-2 px-4 rounded-md text-sm bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer">
-                Add movie
-              </button>
+              {movie.movieId ? (
+                <button
+                  onClick={() => fetchMovie()}
+                  className="flex justify-center items-center text-sm py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-md cursor-pointer text-white"
+                >
+                  <FaPen />
+                  Edit movie
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="flex justify-center items-center text-sm py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-md cursor-pointer text-white"
+                >
+                  <FaPlus />
+                  Add movie
+                </button>
+              )}
             </div>
           </div>
         </div>
+        {isEditModalOpen && (
+          <EditMovie
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            movie={movieToEdit}
+          />
+        )}
+        {isAddModalOpen && (
+          <AddMovie
+            isOpen={isAddModalOpen}
+            onClose={() => setIsAddModalOpen(false)}
+            movie={movie}
+            setShowResults={() => {
+              hideResults();
+              onClose();
+            }}
+            setTitle={setTitle}
+          />
+        )}
       </motion.div>
     </div>
   );

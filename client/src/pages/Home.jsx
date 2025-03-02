@@ -11,7 +11,7 @@ const Home = () => {
   const { userData } = useContext(AppContext);
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-dark-black transition-all duration-500">
+    <div className="flex min-h-screen bg-gray-100 dark:bg-medium-black transition-all duration-500">
       <Sidebar />
       <div className="flex-grow ml-64">
         <div className="flex p-4 items-center justify-center">

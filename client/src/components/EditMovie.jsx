@@ -8,7 +8,7 @@ import { FaAnglesRight, FaCalendar } from "react-icons/fa6";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 
-const UpdateMovie = ({ isOpen, onClose, movie }) => {
+const EditMovie = ({ isOpen, onClose, movie }) => {
   if (!isOpen) return null;
 
   const { getUserMovies, backendUrl } = useContext(AppContext);
@@ -22,7 +22,7 @@ const UpdateMovie = ({ isOpen, onClose, movie }) => {
   );
   const [watchTimeError, setWatchTimeError] = useState(false);
 
-  const updateMovie = async () => {
+  const editMovie = async () => {
     if (!watchTime) {
       setWatchTimeError(true);
       return;
@@ -196,13 +196,13 @@ const UpdateMovie = ({ isOpen, onClose, movie }) => {
           <div className="w-full flex justify-end items-center gap-2 px-4 pb-4">
             <button
               onClick={onClose}
-              className="py-2 px-4 rounded-md text-sm bg-gray-200 border border-gray-300 text-dark-black hover:bg-gray-300 transition-all duration-300 cursor-pointer dark:text-white dark:bg-light-black dark:border-none dark:hover:bg-dark-black"
+              className="py-2 px-4 rounded-md text-sm bg-gray-200 border border-gray-300 text-dark-black transition-all duration-300 cursor-pointer dark:text-white dark:bg-light-black dark:border-none "
             >
               Cancel
             </button>
             <button
-              onClick={() => updateMovie()}
-              className="py-2 px-4 rounded-md text-sm bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer"
+              onClick={() => editMovie()}
+              className="py-2 px-4 rounded-md text-sm bg-dark-blue transition-all duration-300 text-white cursor-pointer"
             >
               Update movie
             </button>
@@ -213,4 +213,4 @@ const UpdateMovie = ({ isOpen, onClose, movie }) => {
   );
 };
 
-export default UpdateMovie;
+export default EditMovie;

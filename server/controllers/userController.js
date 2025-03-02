@@ -91,6 +91,40 @@ export const addMovieToUser = async (req, res) => {
   }
 };
 
+export const getUserMovieById = async (req, res) => {
+  const { userId } = req.body;
+  const { movieId } = req.params;
+
+  if (!userId || !movieId) {
+    return res.json({ success: false, message: "Missing required fields" });
+  }
+
+  try {
+    const user = await userModel.findById(userId).populate({
+      path: "watchedMovies",
+      match: { _id: movieId },
+    });
+
+    if (!user || !user.watchedMovies.length) {
+      return res.json({
+        success: false,
+        message: "Movie not found for this user",
+      });
+    }
+
+    return res.json({
+      success: true,
+      movie: user.watchedMovies[0],
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Error fetching movie",
+      error: error.message,
+    });
+  }
+};
+
 export const getUserMovies = async (req, res) => {
   const { userId } = req.body;
 

@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import MovieDetail from "./MovieDetail";
-import UpdateMovie from "./UpdateMovie";
+import EditMovie from "./EditMovie";
 
 const MovieCard = ({ movie }) => {
   const { backendUrl, getUserMovies } = useContext(AppContext);
@@ -57,17 +57,19 @@ const MovieCard = ({ movie }) => {
     }
   };
 
-  const fetchMovieDetail = async (movieId) => {
+  const fetchMovieDetail = async (tmdbId, movieId) => {
     setIsLoading(true);
+
     try {
       const res = await axios.post(
         `${backendUrl}/api/movies/movie-detail`,
-        { movieId },
+        { movieId: tmdbId },
         {
           headers: { "Content-Type": "application/json" },
         }
       );
-      setMovieDetail(res.data);
+      setMovieDetail({ ...res.data, movieId: movieId });
+
       setIsDetailModalOpen(true);
     } catch (error) {
       toast.error(error.message);
@@ -77,7 +79,7 @@ const MovieCard = ({ movie }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-medium-black px-4 py-3 rounded-2xl relative">
+    <div className="bg-white dark:bg-light-black px-4 py-3 rounded-2xl relative transition-all duration-500">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white bg-opacity-75 dark:bg-light-black dark:bg-opacity-75 z-10">
           <ImSpinner2 className="animate-spin text-gray-600" size={30} />
@@ -86,7 +88,7 @@ const MovieCard = ({ movie }) => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between">
           <h1
-            onClick={() => fetchMovieDetail(movie.tmdbId)}
+            onClick={() => fetchMovieDetail(movie.tmdbId, movie._id)}
             className="font-semibold text-gray-900 dark:text-gray-100 line-clamp-1 cursor-pointer"
           >
             {movie.title}
@@ -109,14 +111,14 @@ const MovieCard = ({ movie }) => {
         <hr className="mt-2 text-gray-200 dark:text-gray-600" />
         <div className="w-full flex items-center justify-center my-4">
           <img
-            onClick={() => fetchMovieDetail(movie.tmdbId)}
+            onClick={() => fetchMovieDetail(movie.tmdbId, movie._id)}
             src={
               movie.posterPath
                 ? `https://image.tmdb.org/t/p/w500${movie.posterPath}`
                 : "/default_poster.jpg"
             }
             alt={movie.title}
-            className="w-28 h-40 object-cover rounded-lg shadow-card cursor-pointer"
+            className="w-28 h-40 object-cover rounded-lg shadow-card dark:shadow-card-dark cursor-pointer"
           />
         </div>
 
@@ -147,7 +149,7 @@ const MovieCard = ({ movie }) => {
         />
       )}
       {isEditModalOpen && (
-        <UpdateMovie
+        <EditMovie
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           movie={movie}

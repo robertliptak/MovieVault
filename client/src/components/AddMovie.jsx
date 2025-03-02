@@ -4,7 +4,7 @@ import { IoClose } from "react-icons/io5";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FaAnglesRight, FaCalendar } from "react-icons/fa6";
+import { FaAnglesRight, FaCalendar, FaPlus } from "react-icons/fa6";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 
@@ -27,7 +27,7 @@ const AddMovie = ({ isOpen, onClose, movie, setShowResults, setTitle }) => {
 
     try {
       await axios.post(`${backendUrl}/api/user/add-movie`, {
-        tmdbId: movie.tmdbId,
+        tmdbId: movie.id,
         title: movie.title,
         posterPath: movie.poster_path,
         watchTime,
@@ -193,14 +193,15 @@ const AddMovie = ({ isOpen, onClose, movie, setShowResults, setTitle }) => {
           <div className="w-full flex justify-end items-center gap-2 px-4 pb-4">
             <button
               onClick={onClose}
-              className="py-2 px-4 rounded-md text-sm bg-gray-200 border border-gray-300 text-dark-black hover:bg-gray-300 transition-all duration-300 cursor-pointer dark:text-white dark:bg-light-black dark:border-none dark:hover:bg-dark-black"
+              className="py-2 px-4 rounded-md text-sm bg-gray-200 border border-gray-300 text-dark-black  transition-all duration-300 cursor-pointer dark:text-white dark:bg-light-black dark:border-none"
             >
               Cancel
             </button>
             <button
               onClick={() => addMovie()}
-              className="py-2 px-4 rounded-md text-sm bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer"
+              className="flex justify-center items-center text-sm py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-md cursor-pointer text-white"
             >
+              <FaPlus />
               Add movie
             </button>
           </div>
