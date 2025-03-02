@@ -1,13 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import LeftSide from "../components/LeftSide";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { backendUrl, setIsLoggedIn, getUserData } = useContext(AppContext);
+  const { backendUrl, isLoggedIn, setIsLoggedIn, getUserData } =
+    useContext(AppContext);
 
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState("");
@@ -68,22 +70,15 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
+
   return (
     <div className="flex min-h-screen w-full dark:bg-medium-black">
-      {/* Left Side */}
-      <div className="w-1/2 h-screen flex items-center justify-center p-5">
-        <div className="w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
-          <div
-            onClick={() => navigate("/")}
-            className="absolute bg-gray-200/20 hover:bg-gray-200/30 transition-all duration-300 backdrop-blur-lg top-5 right-5 py-2 px-4 rounded-2xl text-white font-light flex items-center justify-center gap-2 cursor-pointer"
-          >
-            Back to website
-            <FaArrowRight />
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side */}
+      <LeftSide />
       <div className="w-1/2 h-screen flex items-center justify-center p-5">
         <div className="w-full h-full max-w-md p-5 flex flex-col justify-center items-center">
           <h1 className="text-4xl text-black dark:text-gray-200 font-medium text-left w-full mb-6">
@@ -99,7 +94,7 @@ const Login = () => {
                 setPassword("");
                 setErrors({});
               }}
-              className="text-blue-700 hover:text-blue-800 transition-all duration-300 cursor-pointer underline"
+              className="text-dark-blue hover:text-blue-700 transition-all duration-300 cursor-pointer underline"
             >
               {isLogin ? "Sign up here" : "Log in here"}
             </span>
@@ -160,7 +155,7 @@ const Login = () => {
             </div>
 
             {isLogin && (
-              <div className="text-blue-700 hover:text-blue-800 transition-all duration-300">
+              <div className="text-dark-blue hover:text-blue-700 transition-all duration-300">
                 <span
                   onClick={() => navigate("/reset-password")}
                   className="cursor-pointer"
@@ -171,7 +166,7 @@ const Login = () => {
             )}
 
             <button
-              className="w-full py-2.5 rounded-md mt-10 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
+              className="w-full py-2.5 rounded-md mt-10 bg-dark-blue hover:bg-blue-700 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
               disabled={loading || Object.keys(errors).length > 0}
             >
               {loading ? "Loading..." : isLogin ? "Log in" : "Sign up"}

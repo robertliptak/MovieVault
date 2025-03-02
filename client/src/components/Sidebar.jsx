@@ -74,7 +74,7 @@ const Sidebar = () => {
             Log in
           </h1>
         )}
-        {isLoggedIn && !userData.isAccountVerified && (
+        {isLoggedIn && userData && !userData.isAccountVerified && (
           <h1
             onClick={() => sendVerificationOtp()}
             className="dark:text-white cursor-pointer hover:text-dark-blue dark:hover:text-light-blue transition-all duration-200 mt-2"

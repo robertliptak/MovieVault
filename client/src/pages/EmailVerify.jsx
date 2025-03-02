@@ -4,6 +4,7 @@ import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FaArrowRight } from "react-icons/fa";
+import LeftSide from "../components/LeftSide";
 
 const EmailVerify = () => {
   const { backendUrl, isLoggedIn, userData, getUserData } =
@@ -77,20 +78,8 @@ const EmailVerify = () => {
 
   return (
     <div className="flex min-h-screen w-full dark:bg-medium-black">
-      {/* Left Side */}
-      <div className="w-1/2 h-screen flex items-center justify-center p-5">
-        <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
-          <div
-            onClick={() => navigate("/")}
-            className="absolute bg-gray-200/20 hover:bg-gray-200/30 transition-all duration-300 backdrop-blur-lg top-5 right-5 py-2 px-4 rounded-2xl text-white font-light flex items-center justify-center gap-2 cursor-pointer"
-          >
-            Back to website
-            <FaArrowRight />
-          </div>
-        </div>
-      </div>
+      <LeftSide />
 
-      {/* Right Side */}
       <div className="w-1/2 h-screen flex items-center justify-center p-5 relative">
         <form className="w-full h-full max-w-md p-5 flex flex-col justify-center items-start">
           <h1 className="text-4xl text-black dark:text-gray-200 font-medium text-left w-full mb-4">

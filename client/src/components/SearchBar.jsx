@@ -17,7 +17,7 @@ import AddMovie from "./AddMovie";
 import EditMovie from "./EditMovie";
 
 const SearchBar = () => {
-  const { backendUrl } = useContext(AppContext);
+  const { backendUrl, isLoggedIn } = useContext(AppContext);
   const [title, setTitle] = useState("");
   const [movies, setMovies] = useState([]);
   const [showResults, setShowResults] = useState(false);
@@ -40,13 +40,24 @@ const SearchBar = () => {
       }
 
       try {
-        const res = await axios.post(
-          `${backendUrl}/api/movies/movies-by-title`,
-          { title: query },
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        let res;
+        if (isLoggedIn) {
+          res = await axios.post(
+            `${backendUrl}/api/movies/movies-by-title`,
+            { title: query },
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+        } else {
+          res = await axios.post(
+            `${backendUrl}/api/movies/movies-by-title-no-auth`,
+            { title: query },
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+        }
 
         const sortedMovies = res.data.results
           ? res.data.results.sort((a, b) => b.vote_count - a.vote_count)
@@ -57,7 +68,7 @@ const SearchBar = () => {
         console.error("Error fetching movies:", error);
       }
     }, 500),
-    []
+    [isLoggedIn]
   );
 
   const onChangeHandler = (e) => {
@@ -186,27 +197,31 @@ const SearchBar = () => {
                       </p>
                     </div>
                   </div>
-                  {movie.movieId ? (
-                    <button
-                      onClick={() => fetchMovieToEdit(movie.movieId)}
-                      className="rounded-full p-2 bg-gray-300 hover:bg-gray-400 transition-all duration-200 cursor-pointer"
-                    >
-                      <FaPen />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setIsAddModalOpen(true);
-                        setAddMovie({
-                          title: movie.title,
-                          poster_path: movie.poster_path,
-                          id: movie.id,
-                        });
-                      }}
-                      className="rounded-full p-2 bg-gray-300 hover:bg-gray-400 transition-all duration-200 cursor-pointer"
-                    >
-                      <FaPlus />
-                    </button>
+                  {isLoggedIn && (
+                    <>
+                      {movie.movieId ? (
+                        <button
+                          onClick={() => fetchMovieToEdit(movie.movieId)}
+                          className="rounded-full p-2 bg-gray-300 hover:bg-gray-400 transition-all duration-200 cursor-pointer"
+                        >
+                          <FaPen />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setIsAddModalOpen(true);
+                            setAddMovie({
+                              title: movie.title,
+                              poster_path: movie.poster_path,
+                              id: movie.id,
+                            });
+                          }}
+                          className="rounded-full p-2 bg-gray-300 hover:bg-gray-400 transition-all duration-200 cursor-pointer"
+                        >
+                          <FaPlus />
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               )}

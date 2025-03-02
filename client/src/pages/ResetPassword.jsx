@@ -1,12 +1,13 @@
 import axios from "axios";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
+import LeftSide from "../components/LeftSide";
 
 const ResetPassword = () => {
-  const { backendUrl } = useContext(AppContext);
+  const { backendUrl, isLoggedIn } = useContext(AppContext);
 
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -128,24 +129,16 @@ const ResetPassword = () => {
     }
   };
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
+
   return (
     <div className="flex min-h-screen w-full dark:bg-medium-black">
-      {/* Left Side */}
-      <div className="w-1/2 h-screen flex items-center justify-center p-5">
-        <div className=" w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-gray-900 relative">
-          <div
-            onClick={() => navigate("/login")}
-            className="absolute bg-gray-200/20 hover:bg-gray-200/30 transition-all duration-300 backdrop-blur-lg top-5 right-5 py-2 px-4 rounded-2xl text-white font-light flex items-center justify-center gap-2 cursor-pointer"
-          >
-            Back to log in
-            <FaArrowRight />
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side */}
+      <LeftSide />
       <div className="w-1/2 h-screen flex items-center justify-center p-5 relative">
-        {/* Email form */}
         {!isEmailSent && (
           <form
             onSubmit={onSubmitEmail}
@@ -175,7 +168,7 @@ const ResetPassword = () => {
             </div>
 
             <button
-              className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
+              className="w-full py-2.5 rounded-md mt-2 bg-dark-blue hover:bg-blue-700 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
               disabled={loadingEmail || errors.email}
             >
               {loadingEmail ? "Sending..." : "Send reset code"}
@@ -256,7 +249,7 @@ const ResetPassword = () => {
             </div>
 
             <button
-              className="w-full py-2.5 rounded-md mt-2 bg-blue-800 hover:bg-blue-950 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
+              className="w-full py-2.5 rounded-md mt-2 bg-dark-blue hover:bg-blue-700 transition-all duration-300 text-white cursor-pointer disabled:bg-gray-500 disabled:cursor-not-allowed"
               disabled={loadingPassword || errors.password}
             >
               {loadingPassword ? "Resetting..." : "Submit"}
@@ -266,20 +259,20 @@ const ResetPassword = () => {
         <div className="absolute bottom-14 transform -translate-y-1/2 w-1/3 flex items-center justify-between">
           <div
             className={`w-16 h-2 rounded-full ${
-              !isEmailSent ? "bg-blue-800" : "bg-gray-300 dark:bg-gray-600"
+              !isEmailSent ? "bg-dark-blue" : "bg-gray-300 dark:bg-gray-600"
             }`}
           ></div>
           <div
             className={`w-16 h-2 rounded-full  ${
               !isOtpSubmitted && isEmailSent
-                ? "bg-blue-800"
+                ? "bg-dark-blue"
                 : "bg-gray-300 dark:bg-gray-600"
             }`}
           ></div>
           <div
             className={`w-16 h-2 rounded-full ${
               isOtpSubmitted && isEmailSent
-                ? "bg-blue-800"
+                ? "bg-dark-blue"
                 : "bg-gray-300 dark:bg-gray-600"
             }`}
           ></div>

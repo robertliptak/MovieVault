@@ -9,7 +9,7 @@ import EditMovie from "./EditMovie";
 import AddMovie from "./AddMovie";
 
 const MovieDetail = ({ isOpen, onClose, movie, setTitle, hideResults }) => {
-  const { backendUrl } = useContext(AppContext);
+  const { backendUrl, isLoggedIn } = useContext(AppContext);
 
   const [isSummaryShowed, setIsSummaryShowed] = useState(false);
   const [movieToEdit, setMovieToEdit] = useState(null);
@@ -185,22 +185,26 @@ const MovieDetail = ({ isOpen, onClose, movie, setTitle, hideResults }) => {
               >
                 Cancel
               </button>
-              {movie.movieId ? (
-                <button
-                  onClick={() => fetchMovie()}
-                  className="flex justify-center items-center text-sm py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-md cursor-pointer text-white"
-                >
-                  <FaPen />
-                  Edit movie
-                </button>
-              ) : (
-                <button
-                  onClick={() => setIsAddModalOpen(true)}
-                  className="flex justify-center items-center text-sm py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-md cursor-pointer text-white"
-                >
-                  <FaPlus />
-                  Add movie
-                </button>
+              {isLoggedIn && (
+                <>
+                  {movie.movieId ? (
+                    <button
+                      onClick={() => fetchMovie()}
+                      className="flex justify-center items-center text-sm py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-md cursor-pointer text-white"
+                    >
+                      <FaPen />
+                      Edit movie
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setIsAddModalOpen(true)}
+                      className="flex justify-center items-center text-sm py-2 pl-3 pr-5 gap-1 bg-dark-blue rounded-md cursor-pointer text-white"
+                    >
+                      <FaPlus />
+                      Add movie
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>

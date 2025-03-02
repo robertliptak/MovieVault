@@ -7,8 +7,9 @@ export const AppContext = createContext();
 export const AppContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(false);
+  const [userData, setUserData] = useState(null);
   const [userMovies, setUserMovies] = useState([]);
+  const [loadingMovies, setLoadingMovies] = useState(false);
 
   const getAuthState = async () => {
     try {
@@ -28,15 +29,32 @@ export const AppContextProvider = (props) => {
   const getUserData = async () => {
     try {
       const { data } = await axios.get(backendUrl + "/api/user/data");
-      data.success ? setUserData(data.userData) : toast.error(data.message);
+      if (data.success) {
+        setUserData(data.userData);
+      } else {
+        toast.error(data.message);
+        setUserData(null);
+      }
     } catch (error) {
-      error.error(data.message);
+      toast.error(error.message);
+      setUserData(null);
     }
   };
 
   const getUserMovies = async () => {
+    let timeout;
+
+    const setLoadingWithDelay = new Promise((resolve) => {
+      timeout = setTimeout(() => {
+        setLoadingMovies(true);
+        resolve();
+      }, 500);
+    });
+
     try {
       const { data } = await axios.get(`${backendUrl}/api/user/movies`);
+      await setLoadingWithDelay;
+
       if (data.success) {
         setUserMovies(data.movies);
       } else {
@@ -44,6 +62,9 @@ export const AppContextProvider = (props) => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      clearTimeout(timeout);
+      setLoadingMovies(false);
     }
   };
 
@@ -57,6 +78,7 @@ export const AppContextProvider = (props) => {
     setIsLoggedIn,
     userData,
     userMovies,
+    loadingMovies,
     setUserData,
     getUserData,
     getUserMovies,
