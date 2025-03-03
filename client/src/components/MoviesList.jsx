@@ -2,19 +2,19 @@ import React, { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import MovieCard from "./MovieCard";
 import { LuSearch } from "react-icons/lu";
-import { FaSort } from "react-icons/fa";
-import { FaCheck } from "react-icons/fa"; // Checkmark for active sort option
+import { FaSort, FaCheck } from "react-icons/fa";
+import { MdMovie } from "react-icons/md";
 
 const MoviesList = () => {
   const { userMovies } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("watchTimeDesc");
   const [showSortMenu, setShowSortMenu] = useState(false);
-  const [groupByMonth, setGroupByMonth] = useState(true); // Toggle for month grouping
+  const [groupByMonth, setGroupByMonth] = useState(true);
 
   const handleSortChange = (option) => {
     setSortOption(option);
-    setShowSortMenu(false); // Close menu after selecting
+    setShowSortMenu(false);
   };
 
   const sortedMovies = [...userMovies].sort((a, b) => {
@@ -61,9 +61,7 @@ const MoviesList = () => {
 
   return (
     <div className="p-4 space-y-2 w-full">
-      {/* Search & Sort Controls */}
       <div className="mb-4 flex items-center gap-4">
-        {/* Sort Button */}
         <div className="relative">
           <button
             onClick={() => setShowSortMenu(!showSortMenu)}
@@ -73,7 +71,6 @@ const MoviesList = () => {
             <p>Sort by</p>
           </button>
 
-          {/* Dropdown Menu */}
           {showSortMenu && (
             <div className="absolute left-0 mt-2 px-2 pt-2 pb-1 border border-gray-300 dark:border-light-black bg-gray-100 dark:bg-dark-black rounded-md shadow-md z-10 w-56">
               <ul className="text-sm text-gray-900 dark:text-gray-200">
@@ -115,9 +112,10 @@ const MoviesList = () => {
             placeholder="Search by title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 p-2 text-sm bg-gray-300/50 dark:bg-light-black  rounded-md  dark:text-gray-100 dark:placeholder:text-gray-300 outline-none"
+            className="w-full pl-8 p-2 text-sm bg-gray-300/50 dark:bg-light-black rounded-md dark:text-gray-100 dark:placeholder:text-gray-300 outline-none"
           />
         </div>
+
         <div className="flex items-center justify-center gap-2">
           <button
             onClick={() => setGroupByMonth(!groupByMonth)}
@@ -133,30 +131,47 @@ const MoviesList = () => {
         </div>
       </div>
 
-      {/* Movie List - Grouped or Flat */}
       {groupByMonth ? (
-        filteredMovies.map(({ monthYear, movies }) => (
-          <div key={monthYear}>
-            <h2 className="text-md text-gray-900 dark:text-gray-100 mb-2">
-              {monthYear}
-            </h2>
-            <hr className="text-gray-300 dark:text-gray-600 mb-6" />
-            <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-14">
-              {movies.map((movie) => (
-                <MovieCard key={movie._id} movie={movie} />
-              ))}
+        filteredMovies.length > 0 ? (
+          filteredMovies.map(({ monthYear, movies }) => (
+            <div key={monthYear}>
+              <h2 className="text-md text-gray-900 dark:text-gray-100 mb-2">
+                {monthYear}
+              </h2>
+              <hr className="text-gray-300 dark:text-gray-600 mb-6" />
+              <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-14">
+                {movies.map((movie) => (
+                  <MovieCard key={movie._id} movie={movie} />
+                ))}
+              </div>
             </div>
-          </div>
-        ))
-      ) : (
+          ))
+        ) : (
+          <EmptyState />
+        )
+      ) : flatFilteredMovies.length > 0 ? (
         <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-14">
           {flatFilteredMovies.map((movie) => (
             <MovieCard key={movie._id} movie={movie} />
           ))}
         </div>
+      ) : (
+        <EmptyState />
       )}
     </div>
   );
 };
+
+const EmptyState = () => (
+  <div className="flex flex-col items-center justify-center mt-10">
+    <MdMovie className="text-6xl text-gray-400 animate-pulse" />
+    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">
+      No movies found
+    </h2>
+    <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
+      Search for a movie to add
+    </p>
+  </div>
+);
 
 export default MoviesList;

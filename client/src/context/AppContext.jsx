@@ -48,7 +48,7 @@ export const AppContextProvider = (props) => {
       timeout = setTimeout(() => {
         setLoadingMovies(true);
         resolve();
-      }, 500);
+      }, 200);
     });
 
     try {

@@ -90,13 +90,35 @@ const MovieDetail = ({ isOpen, onClose, movie, setTitle, hideResults }) => {
                 <p className="text-gray-600 text-sm dark:text-gray-300">
                   Actors
                 </p>
-                <p className="text-medium-black text-sm dark:text-gray-100">
-                  {movie.omdbData.Actors.split(", ").map((actor, index) => (
-                    <span key={index} className="block">
-                      {actor}
+                <div className="text-medium-black text-sm dark:text-gray-100">
+                  {movie.cast.map((actor) => (
+                    <span
+                      key={actor.id}
+                      className="relative group block underline text-dark-blue hover:text-blue-700"
+                    >
+                      {actor.name}
+
+                      <div className="absolute left-[-170px] bottom-0 translate-y-1/2 hidden group-hover:flex flex-col items-center w-40 bg-gray-100 dark:bg-medium-black dark:border-light-black dark:text-white border border-gray-300 text-dark-black p-2 rounded-md z-10">
+                        <img
+                          src={
+                            actor.profile_path
+                              ? `https://image.tmdb.org/t/p/w200${actor.profile_path}`
+                              : "/default_poster.jpg"
+                          }
+                          alt={actor.name}
+                          className="w-30 h-45 object-cover rounded-md mb-1"
+                        />
+
+                        <span className="text-sm text-center">
+                          {actor.name} as{" "}
+                          <span className="text-dark-blue dark:text-light-blue">
+                            {actor.character}
+                          </span>
+                        </span>
+                      </div>
                     </span>
                   ))}
-                </p>
+                </div>
 
                 <p className="text-gray-600 text-sm dark:text-gray-300">
                   Genre
